@@ -175,7 +175,7 @@ public class PostDAOImpl implements PostDAO {
 		while (rs.next()) {
 			//comment Attribute;
 			id++;
-			int postId = rs.getInt("Id");
+			int postId = rs.getInt("postFacetType.PostId");
 			String focus = rs.getString("Focus");
 			String environment = rs.getString("Environment");
 			int post_typeId = rs.getInt("PostTypeId");
