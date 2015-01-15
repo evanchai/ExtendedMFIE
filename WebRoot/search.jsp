@@ -514,7 +514,7 @@ var projectName = "";
 		    {
 		    	num++;
 		    	allSelectedItems = allSelectedItems.substring(index1+1, allSelectedItems.length);
-		    	alert(allSelectedItems);
+		    //	alert(allSelectedItems);
 		    	var index2 = allSelectedItems.indexOf("&");
 		    	var id = allSelectedItems.substring(0, index2);
 		    	$("#" + id).show();

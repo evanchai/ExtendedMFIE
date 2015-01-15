@@ -248,8 +248,8 @@ public class GetStackOverflowDataService
 		map.put("focusFacet", focusTree);
 		JSONArray environmentFacet = JSONArray.fromObject(tree.getEnvironmentJSONString());
 		map.put("environmentFacet", environmentFacet);
-		JSONArray topicCalledByTree = JSONArray.fromObject(tree.getTopicCalledByJSONString());
-		map.put("topicCalledByTree", topicCalledByTree);
+//		JSONArray topicCalledByTree = JSONArray.fromObject(tree.getTopicCalledByJSONString());
+//		map.put("topicCalledByTree", topicCalledByTree);
     	JSONArray packageTree = JSONArray.fromObject(tree.getTagJSONString());
     	map.put("packageTree", packageTree);
     	JSONArray typeTree = JSONArray.fromObject(tree.getContentJSONString());
@@ -260,8 +260,8 @@ public class GetStackOverflowDataService
 //    	map.put("callTree", callTree);
 		
 		//Added feature.
-		JSONArray vHistoryTree = JSONArray.fromObject(tree.getVHistoryJSONString());
-		map.put("vHistoryTree", vHistoryTree);
+//		JSONArray vHistoryTree = JSONArray.fromObject(tree.getVHistoryJSONString());
+//		map.put("vHistoryTree", vHistoryTree);
 		
 //		JSONArray accessTree = JSONArray.fromObject(tree.getAccessJSONString());
 //		map.put("accessTree", accessTree);
