@@ -190,11 +190,11 @@ var projectName = "";
 			
 			projectName = '${map.projectName}';			
 			
-	    	$("#focusFacet").ligerTree({ data: ${map.focusFacet},onCheck: filterTopic});			
-			$("#environmentFacet").ligerTree({ data: ${map.environmentFacet} , onCheck: filterTopicCall});
+	    	$("#focusFacet").ligerTree({ data: ${map.focusFacet}, onCheck:filterTopic});			
+			$("#environmentFacet").ligerTree({ data: ${map.environmentFacet},onCheck: filterTopicCall});
 	    //	$("#languageFacet").ligerTree({ data: ${map.topicCalledByTree} , onCheck: filterTopicCalledBy});
-			$("#tagFacet").ligerTree({ data: ${map.packageTree} , onCheck: filterPackage});			
-			$("#contentFacet").ligerTree({ data: ${map.typeTree} , onCheck: filterType});			
+			$("#tagFacet").ligerTree({ data: ${map.packageTree},onCheck: filterPackage});			
+			$("#contentFacet").ligerTree({ data: ${map.typeTree},onCheck: filterType});			
 		//	$("#vHistoryTree").ligerTree({ data: ${map.vHistoryTree} , onCheck: filterVHistory});
 	
 		//jqt	
@@ -206,7 +206,7 @@ var projectName = "";
 		//jqt
 			 managerPackage = $("#tagFacet").ligerGetTreeManager();
 			managerPackage.collapseAll();			 
-		 managerType = $("#contentFacet").ligerGetTreeManager();
+			 managerType = $("#contentFacet").ligerGetTreeManager();
 			managerType.collapseAll();	
 		//jqt	
 			
@@ -506,7 +506,7 @@ var projectName = "";
 			getVal();
             
             
-			$("#result > ol > li").hide(); //hide all candidates	
+			$("#result > ol > div").hide(); //hide all candidates	
 			
 		    var index1 = allSelectedItems.indexOf("&");
 			var num = 0;
@@ -520,7 +520,6 @@ var projectName = "";
 		    	$("#" + id).show();
 		    	allSelectedItems = allSelectedItems.substring(index2+1, allSelectedItems.length);
 		    	index1 = allSelectedItems.indexOf("&");
-		    	
 		    };
 			/*
 
@@ -539,7 +538,7 @@ var projectName = "";
 				};			
 			}*/
 		//	$("#resultCount").html($("#result > ol > li:visible").length + " results");
-		    $("#resultCount").html(num + " results");
+		    $("#resultCount").html(num + "results");
 		}
 
 		var nothing = "-1";
@@ -778,9 +777,9 @@ var projectName = "";
 
 						<ol>
 							<c:forEach var="list" items="${map.data}" varStatus="status">
-								<%-- <li class="g" id='${list.postId}'> --%>
-								<tr>
-								<td class="postcell">
+<%-- 								<li class="g" id='${list.postId}'>--%>
+								<div id='${list.postId}'>
+								<td class="postcell" >
 								<div class="content">
 										<h3 class="r">
 											<input type="checkbox" /> <a href="javascript:void(0)"
@@ -793,8 +792,8 @@ var projectName = "";
 										<a class="post-tag">${list.post_tag}</a>
 									</div>
 								</div>
+								</div>
 								</td>
-								</tr>
 								<!-- </li> -->
 							</c:forEach>
 						</ol>
