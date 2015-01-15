@@ -1,0 +1,131 @@
+CREATE TABLE [Experiment] (
+  [ID] CHAR(20), 
+  [description] CHAR(100));
+CREATE TABLE [ExperimentResult] (
+  [featureID] CHAR(20), 
+  [experimentID] CHAR(20), 
+  [type] CHAR(30), 
+  [top10] REAL, 
+  [top20] REAL, 
+  [top30] REAL, 
+  [top40] REAL);
+CREATE TABLE [Feature] (
+  [projectName] VARCHAR2(100), 
+  [ID] CHAR(20), 
+  [description] VARCHAR2(500), 
+  [relevantElements] TEXT, 
+  [elementCount] INTEGER);
+CREATE TABLE [MethodInvocationLink] (
+  [projectName] VARCHAR(100), 
+  [name] VARCHAR(200), 
+  [invocationLink] TEXT, 
+  [linkLength] INTEGER);
+CREATE TABLE associatedMethod(name char(256), associatedMethod text);
+CREATE TABLE classInfo
+(
+	projectName varchar(100) not null,
+	name varchar(100) ,
+	fileName varchar(200) ,	
+	interfaces varchar(1000),
+	superClass varchar(100),
+	isInterface boolean,
+	isSuperClass boolean,
+	isAnonymous boolean,
+	modifies varchar(200),
+	content text,
+	PNGwordcloud blob	
+);
+CREATE TABLE cloneInfo(methodName char(256),class char(32), start integer, end integer);
+CREATE TABLE cluster
+	(	
+		projectName varchar(100),
+		clustertype varchar(20),
+		methodList text,
+		tagCloudsrc varchar(500),
+		name varchar(100)
+	);
+CREATE TABLE conceptExtent
+	(	
+		projectName varchar(100),
+		id integer,
+		name varchar(200)
+	);
+CREATE TABLE conceptIntent
+	(	
+		projectName varchar(100),
+		id integer,
+		name varchar(200)
+	);
+CREATE TABLE contextcluster
+	(	
+		projectName varchar(100),
+		clustertype varchar(20),
+		methodList text,
+		tagCloudsrc varchar(500),
+		initialClusterName varchar(100),
+		name varchar(100)
+	);
+CREATE TABLE enumInfo
+(
+	projectName varchar(100) not null,
+	name varchar(200) not null,
+	memberList varchar(1000),
+	modifies varchar(100)	
+);
+CREATE TABLE [fieldinfo] (
+  [projectName] varchar(100) NOT NULL, 
+  [name] varchar(200) NOT NULL, 
+  [javadoc] varchar(1000), 
+  [className] varchar(200), 
+  [dataType] varchar(200), 
+  [modifies] varchar(100), 
+  [identifier] VARCHAR(300));
+CREATE TABLE methodInvocationInfo
+(
+	projectName varchar(100) not null,	
+	invocateVariant varchar(2000),
+	callMethodName varchar(2000),
+	calledMethodName varchar(2000)
+);
+CREATE TABLE [methodinfo] (
+  [projectName] varchar(100) NOT NULL, 
+  [name] varchar(200) NOT NULL, 
+  [javadoc] varchar(1000), 
+  [className] varchar(200), 
+  [returnType] varchar(200), 
+  [modifies] varchar(100), 
+  [throwExceptions] varchar(1000), 
+  [isConstructor] boolean, 
+  [content] text, 
+  [PNGwordcloud] blob, 
+  [tags] TEXT, 
+  [accessSameVariableMethods] TEXT, 
+  [identifier] VARCHAR(300));
+CREATE TABLE [relationBetweenMethods] (
+  [projectName] VARCHAR(100), 
+  [srcMethod] VARCHAR(256), 
+  [descMethod] VARCHAR(256), 
+  [tokenSimilarity] NUMBER);
+CREATE TABLE stems
+	(	
+		word varchar(100),
+		stem varchar(100)
+	);
+CREATE TABLE [tokenInMethod] (
+  [methodName] varchar(256), 
+  [projectName] varchar(100), 
+  [tokens] text, 
+  [stem] text, 
+  [tags] TEXT);
+CREATE TABLE variableinfo
+(
+	projectName varchar(100) not null,
+	name varchar(100) not null,
+	datatype varchar(200),
+	belongedMethod varchar(200),	
+	icount integer
+);
+CREATE TABLE [wordnet] (
+  [word] VARCHAR2(30), 
+  [isAdded] BOOLEAN, 
+  [projectName] VARCHAR2(30));

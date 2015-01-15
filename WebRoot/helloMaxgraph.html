@@ -1,0 +1,168 @@
+
+<!--
+  $Id: dynamicloading.html,v 1.11 2011-04-28 15:31:10 gaudenz Exp $
+  Copyright (c) 2006-2010, JGraph Ltd
+  
+  Dynamic loading example for mxGraph. This example demonstrates loading
+  graph model data dynamically to limit the number of cells in the model.
+-->
+<html>
+<head>
+<title>Dynamic loading example for mxGraph</title>
+<style type="text/css">
+body div.mxPopupMenu {
+	-webkit-box-shadow: 3px 3px 6px #C0C0C0;
+	-moz-box-shadow: 3px 3px 6px #C0C0C0;
+	box-shadow: 3px 3px 6px #C0C0C0;
+	background: white;
+	position: absolute;
+	border: 3px solid #e7e7e7;
+	padding: 3px;
+}
+
+body table.mxPopupMenu {
+	border-collapse: collapse;
+	margin: 0px;
+}
+
+body tr.mxPopupMenuItem {
+	color: black;
+	cursor: default;
+}
+
+body td.mxPopupMenuItem {
+	padding: 6px 60px 6px 30px;
+	font-family: Arial;
+	font-size: 10pt;
+}
+
+body td.mxPopupMenuIcon {
+	background-color: white;
+	padding: 0px;
+}
+
+body tr.mxPopupMenuItemHover {
+	background-color: #eeeeee;
+	color: black;
+}
+
+table.mxPopupMenu hr {
+	border-top: solid 1px #cccccc;
+}
+
+table.mxPopupMenu tr {
+	font-size: 4pt;
+}
+</style>
+
+<!-- Sets the basepath for the library if not in same directory -->
+<script type="text/javascript">
+	mxBasePath = '../src';
+</script>
+
+<!-- Loads and initializes the library -->
+<!-- <script type="text/javascript" src="http://www.diagram.ly/client?version=1.10.0.2"></script> -->
+<script type="text/javascript" src="js/mxclient14.js"></script>
+<!-- Example code -->
+<script type="text/javascript">
+	function main(container)
+	{
+		if (!mxClient.isBrowserSupported())
+		{
+			mxUtils.error('Browser is not supported!', 200, false);
+		}
+		else
+		{
+			var graph = new mxGraph(container);
+			graph.setEnabled(true);
+			new mxRubberband(graph);
+			setStyle(graph);
+			//disable build-in context menu
+			mxEvent.disableContextMenu(document.body);
+			mxRectangleShape.prototype.crisp = true;
+			graph.addListener(mxEvent.CLICK, function(sender, evt)
+			 {
+			 var cell = evt.getProperty('cell');
+			 if(cell != null)
+			 {
+			 	load(graph, cell);
+			 }
+			 }); 
+
+			var parent = graph.getDefaultParent();
+			graph.getModel().beginUpdate();
+			try
+			{
+				var newBound = new mxRectangle(0, 0, 50, 50);
+				var v1 = graph.insertVertex(parent, 'idOfHello', 'Hello', 20, 20, 80,
+						30);
+				var v2 = graph.insertVertex(parent, 'idOfWorld', 'World!', 200, 150,
+						80, 30);
+
+				graph.insertEdge(parent, null, 'edge', v1, v2);
+
+				graph.resizeCell(v1, newBound);
+			}
+			finally
+			{
+				graph.getModel().endUpdate();
+			}
+			installMenu(graph);
+		}
+	}
+
+	function installMenu(graph)
+	{
+		graph.panningHandler.factoryMethod = function(menu, cell, evt)
+		{
+			
+			menu.addItem('Item 1', null, function()
+			{
+				alert(cell.id);
+			});
+
+			menu.addItem('Item 2', null, function()
+			{
+				alert('Item 2');
+			});
+
+			menu.addSeparator();
+
+			var submenu1 = menu.addItem('Submenu 1', null, null);
+
+			menu.addItem('Subitem 1', null, function()
+			{
+				alert('Subitem 1');
+			}, submenu1);
+			menu.addItem('Subitem 1', null, function()
+			{
+				alert('Subitem 2');
+			}, submenu1);
+		};
+	}
+
+	function setStyle(graph)
+	{
+
+		var style = graph.getStylesheet().getDefaultVertexStyle();
+		style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
+		style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
+		style[mxConstants.STYLE_GRADIENTCOLOR] = 'white';
+		var style = graph.getStylesheet().getDefaultVertexStyle();
+		 style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
+		 style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
+		 style[mxConstants.STYLE_GRADIENTCOLOR] = 'white'; 
+
+	}
+</script>
+</head>
+
+<!-- Page passes the container for the graph to the grogram -->
+<body onload="main(document.getElementById('graphContainer'))">
+
+	<div id="graphContainer"
+		style="overflow:auto; width:321px; height:241px"></div>
+
+
+</body>
+</html>
