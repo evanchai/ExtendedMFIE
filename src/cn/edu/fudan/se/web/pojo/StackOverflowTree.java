@@ -570,7 +570,7 @@ public class StackOverflowTree
 			{
 				sb.append("{text: " + quote);
 				sb.append(post.post_title.replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", ""));
+						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&",""));
 				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 				sb.append("&"+post.postId +"&");
 				sb.append("</span>");
@@ -633,7 +633,7 @@ public class StackOverflowTree
 			{
 				sb.append("{text: " + quote);
 				sb.append(post.post_title.replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", ""));
+						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&", ""));
 				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 				sb.append("&"+post.postId +"&");
 				sb.append("</span>");
@@ -672,7 +672,7 @@ public class StackOverflowTree
 					Post post = document.getField("post");
 					sb.append("{text: " + quote);
 					sb.append(post.post_title.replace("{", "")
-							.replace("}", "").replace("[", "").replace("]", "").replace("'", ""));
+							.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&",""));
 					sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 					sb.append("&"+post.postId +"&");
 					sb.append("</span>");
@@ -711,7 +711,7 @@ public class StackOverflowTree
 					Post post = document.getField("post");
 					sb.append("{text: " + quote);
 					sb.append(post.post_title.replace("{", "")
-							.replace("}", "").replace("[", "").replace("]", "").replace("'", ""));
+							.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&",""));
 					sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 					sb.append("&"+post.postId +"&");
 					sb.append("</span>");

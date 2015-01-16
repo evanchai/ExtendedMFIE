@@ -190,11 +190,11 @@ var projectName = "";
 			
 			projectName = '${map.projectName}';			
 			
-	    	$("#focusFacet").ligerTree({ data: ${map.focusFacet}, onCheck:filterTopic});			
-			$("#environmentFacet").ligerTree({ data: ${map.environmentFacet},onCheck: filterTopicCall});
+	    	$("#focusFacet").ligerTree({ data: ${map.focusFacet}, onCheck:filterSelected});			
+			$("#environmentFacet").ligerTree({ data: ${map.environmentFacet},onCheck: filterSelected});
 	    //	$("#languageFacet").ligerTree({ data: ${map.topicCalledByTree} , onCheck: filterTopicCalledBy});
-			$("#tagFacet").ligerTree({ data: ${map.packageTree},onCheck: filterPackage});			
-			$("#contentFacet").ligerTree({ data: ${map.typeTree},onCheck: filterType});			
+			$("#tagFacet").ligerTree({ data: ${map.packageTree},onCheck: filterSelected});			
+			$("#contentFacet").ligerTree({ data: ${map.typeTree},onCheck: filterSelected});			
 		//	$("#vHistoryTree").ligerTree({ data: ${map.vHistoryTree} , onCheck: filterVHistory});
 	
 		//jqt	
@@ -236,7 +236,8 @@ var projectName = "";
 			 	 
 		});
 		
-	var allSelectedItems = "";	
+	var allSelectedItems = "";
+	var multiTreeSelected = false;
 		function getVal(){
 
 			allSelectedItems ="";
@@ -247,9 +248,8 @@ var projectName = "";
 		}
 		allSelectedItems = textVHistory + allSelectedItems;
     	$("#valueOfVHistory").val(textVHistory); */
-
-		   var topics = managerTopic.getChecked();
-       
+		   	var topics = managerTopic.getChecked();
+       		
             var textTopic = "";
             for (var i = 0; i < topics.length; i++)
             {
@@ -278,25 +278,23 @@ var projectName = "";
              $("#topicCalledByTree1").val(text1); */
        //     allSelectedItems = text1 + allSelectedItems;
   		    var notes = managerPackage.getChecked();
-           text1 = "";
+            text1 = "";
             for (var i = 0; i < notes.length; i++)
             {
-                
                 text1 += notes[i].data.text + "@";
             }
             allSelectedItems = text1 + allSelectedItems;
             
             $("#valueOfPackageTree").val(text1);
             
-             var notes2 = managerType.getChecked();
+            var notes2 = managerType.getChecked();
             var text2 = "";
             for (var i = 0; i < notes2.length; i++)
             {
-                
                 text2 += notes2[i].data.text + "@";
             }
             allSelectedItems = text2 + allSelectedItems;
-             $("#valueOfTypeTree").val(text2);
+            $("#valueOfTypeTree").val(text2);
      
      /*         var notes8 = managerCalledBy.getChecked();
             var text8 = "";
@@ -348,6 +346,13 @@ var projectName = "";
 			document.forms.form1.submit();
 		}
 		
+		function showStackoverflowPage(id)
+		{
+			document.forms.form1.target= "_blank";
+			document.forms.form1.action="http://stackoverflow.com/questions/" + id;
+			document.forms.form1.submit();
+		}
+
 		function performExperiment()
 		{
 			document.forms.form1.action="search?action=performExperiment";
@@ -356,7 +361,7 @@ var projectName = "";
 		
 		function showRecommend() {
 			var selectedResults = "";
-			$("#result > ol > li ").each(function (n){
+			$("#result > ol > div ").each(function (n){
 			if( this.childNodes[1].childNodes[1].childNodes[1].checked == true)
 				selectedResults = selectedResults + this.attributes["id"].value + ";";
 			});
@@ -440,10 +445,10 @@ var projectName = "";
 		
 		function filterPackage()
 		{
-		$('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
+		/* $('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
 			if(getParentID(this)!="tagFacet")
 				this.className="l-box l-checkbox l-checkbox-unchecked";
-			});
+			}); */
 			currentFacetButton = "btnPackage";
 			filterSelected();
 		}
@@ -501,26 +506,67 @@ var projectName = "";
 			filterSelected();
 		}
 
+		function getArray(a) {
+		 var hash = {},
+		     len = a.length,
+		     result = [];
+		
+		 for (var i = 0; i < len; i++){
+		     if (!hash[a[i]]){
+		         hash[a[i]] = true;
+		     }
+		     else {
+		    	 result.push(a[i]);
+		    	 }
+		     
+		    	
+		     
+		 }
+		 return result;
+		}
+		
+		function isMultitreeSelected(){
+			var treeNums = 0;
+			var focus =managerTopic.getChecked();
+			var enviroments =managerTopicCall.getChecked();
+			var tags =managerPackage.getChecked();
+			var contents =managerType.getChecked();
+			if(focus.length>0) treeNums++;
+			if(enviroments.length>0) treeNums++;
+			if(tags.length>0) treeNums++;
+			if(contents.length>0) treeNums++;
+			
+			return treeNums>1;
+		}
 		function filterSelected()
 		{
+
 			getVal();
-            
-            
-			$("#result > ol > div").hide(); //hide all candidates	
-			
+
+			$("#result > ol > div").hide(); //hide all candidates
+
 		    var index1 = allSelectedItems.indexOf("&");
 			var num = 0;
+			var ids= new Array();
 		    while(index1!=-1)
 		    {
 		    	num++;
 		    	allSelectedItems = allSelectedItems.substring(index1+1, allSelectedItems.length);
-		    //	alert(allSelectedItems);
+		    	//alert(allSelectedItems);
 		    	var index2 = allSelectedItems.indexOf("&");
 		    	var id = allSelectedItems.substring(0, index2);
-		    	$("#" + id).show();
+		    	ids.push(id);
 		    	allSelectedItems = allSelectedItems.substring(index2+1, allSelectedItems.length);
 		    	index1 = allSelectedItems.indexOf("&");
 		    };
+		    if(isMultitreeSelected()) 
+		    	ids=getArray(ids); 
+		    for(var i = 0; i< ids.length;i++)
+		   	{
+		   		$("#" + ids[i]).show();
+		   	}
+		   		
+
 			/*
 
 			for(item in selectedItems)
@@ -537,8 +583,12 @@ var projectName = "";
 					
 				};			
 			}*/
-		//	$("#resultCount").html($("#result > ol > li:visible").length + " results");
-		    $("#resultCount").html(num + "results");
+		//	$("#resultCount").html($("#result > ol > div").length + " results");
+			$("#resultCount").html(ids.length + " results");
+/* 			if(isMultitreeSelected()) 
+				$("#resultCount").html(ids.length + " results");
+			else
+				$("#resultCount").html(num + " results"); */
 		}
 
 		var nothing = "-1";
@@ -783,7 +833,7 @@ var projectName = "";
 								<div class="content">
 										<h3 class="r">
 											<input type="checkbox" /> <a href="javascript:void(0)"
-												class="name" onclick="showPostDetail('${list.postId}');">${list.post_title}</a>
+												class="name" onclick="showStackoverflowPage('${list.postId}');">${list.post_title}</a>
 										</h3>
 									<div class ="post-text itemprop="text">
 										${list.post_body}

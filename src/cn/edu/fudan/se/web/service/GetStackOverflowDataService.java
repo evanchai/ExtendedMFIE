@@ -41,6 +41,7 @@ public class GetStackOverflowDataService
 
 	HttpSession session;
 	ProjectService projectService;
+	List<Post> postList = null;
 	public GetStackOverflowDataService(int type){
 		
 //		projectService = new ProjectService(type);
@@ -50,6 +51,11 @@ public class GetStackOverflowDataService
 	{
 //		projectService = ProjectService.getInstance();
 
+	}
+	
+	public List<Post> getListPost()
+	{
+		return this.postList;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -82,7 +88,6 @@ public class GetStackOverflowDataService
 		
 //		List<Element> elementList = null;
 //		SearchResultService  srs = new SearchResultService();
-		List<Post> postList = null;
 //		List<Facet> facetItemList = null;
 		List<Cluster> clusterByContentList = null;
 		List<Cluster> clusterByTagList = null;

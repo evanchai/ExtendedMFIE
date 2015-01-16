@@ -100,14 +100,17 @@ public class PostDAOImpl implements PostDAO {
 	
 	public List<Answer> findRelatedAnswers(int postId) throws Exception {
 		Connection conn = DBConnection.getConnection();
-		PreparedStatement pstmt = null;
+//		PreparedStatement pstmt = null;
+		Statement stmt = conn.createStatement();
 		List<Answer> answers = new ArrayList<Answer>();
+//		System.out.println("Id:"+postId);
 
 		String SQLString = "SELECT * FROM stackoverflowdata.posts WHERE ParentId="+postId+";";
 
 		try {
-			pstmt = conn.prepareStatement(SQLString);
-			ResultSet rs = pstmt.executeQuery();
+//			pstmt = conn.prepareStatement(SQLString);
+//			ResultSet rs = pstmt.executeQuery();
+			ResultSet rs = stmt.executeQuery(SQLString);
 			while(rs.next())
 			{
 				//comment Attribute;
@@ -115,9 +118,10 @@ public class PostDAOImpl implements PostDAO {
 				String post_title = rs.getString("title");
 				String post_body = rs.getString("body");
 				String post_tag = rs.getString("tags");
+//				System.out.println("check:");
 				int post_comment_count = rs.getInt("CommentCount");//may be null
 				//Answer Attribute;
-				int parentId = rs.getInt("parentID");//may be null
+				int parentId = rs.getInt("parentId");//may be null
 				//Question Attribute;
 				int post_answer_count = rs.getInt("AnswerCount");//may be null
 				int accepted_answerId = rs.getInt("AcceptedAnswerId");//may be null
@@ -129,7 +133,8 @@ public class PostDAOImpl implements PostDAO {
 			System.out.println("Error : " + ex.toString());
 		} finally {
 			DBConnection.close(conn);
-			DBConnection.close(pstmt);
+//			DBConnection.close(pstmt);
+			stmt.close();
 		}
 		return answers;
 	}
@@ -175,7 +180,7 @@ public class PostDAOImpl implements PostDAO {
 		while (rs.next()) {
 			//comment Attribute;
 			id++;
-			int postId = rs.getInt("Id");
+			int postId = rs.getInt("postFacetType.PostId");
 			String focus = rs.getString("Focus");
 			String environment = rs.getString("Environment");
 			int post_typeId = rs.getInt("PostTypeId");
@@ -377,9 +382,9 @@ public class PostDAOImpl implements PostDAO {
 		
 	}
 	
-	public static void main(String args[])
+	public static void main(String args[]) throws Exception
 	{
 		PostDAOImpl pdi = new PostDAOImpl();
-		pdi.findPosts("");
+		pdi.findRelatedAnswers(696);
 	}
 }

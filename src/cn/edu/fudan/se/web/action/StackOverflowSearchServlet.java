@@ -48,14 +48,15 @@ public class StackOverflowSearchServlet extends HttpServlet
 		
 		//choose wether original data initial, or extended MFIE data initial.
 		//by Luminosite.
-		ExtConstant ec = ExtConstant.getInstance();
-		if(ec.EXT_FLAG==ExtConstant.ORI_MFIE){
-
-			data = new GetStackOverflowDataService();
-		}
-		else if(ec.EXT_FLAG==ExtConstant.EXT_MFIE){
-			data = new GetStackOverflowDataService(GetDataService.INIT_PROJECT_LIST);
-		}
+//		ExtConstant ec = ExtConstant.getInstance();
+//		if(ec.EXT_FLAG==ExtConstant.ORI_MFIE){
+//
+//			data = new GetStackOverflowDataService();
+//		}
+//		else if(ec.EXT_FLAG==ExtConstant.EXT_MFIE){
+//			data = new GetStackOverflowDataService(GetDataService.INIT_PROJECT_LIST);
+//		}
+		data = new GetStackOverflowDataService();
 		data.setSession(request.getSession());
 		HistoryTree historyTree = (HistoryTree) request.getSession().getAttribute("HistoryTree");
 		if(historyTree == null)
@@ -167,21 +168,21 @@ public class StackOverflowSearchServlet extends HttpServlet
 			System.out.println("id:"+value);
 			String keywords = (String) request.getSession().getAttribute("keywords");
 			String project = (String) request.getSession().getAttribute("project");
-			System.out.println(keywords);
-			System.out.println(project);
+//			System.out.println("jqtjqt:"+keywords);
+//			System.out.println(project);
 
 			Map<String, Object> map = null;
 			
-			ExtConstant econstant = ExtConstant.getInstance();
+//			ExtConstant econstant = ExtConstant.getInstance();
+//			
+//			if(econstant.EXT_FLAG == ExtConstant.EXT_MFIE){
+//				map = (Map<String, Object>) (((HistoryTree)request.getSession()
+//						.getAttribute("HistoryTree")).getCurrentNode().getData());
+//				
+//			}else if(econstant.EXT_FLAG == ExtConstant.ORI_MFIE)
+//				map = data.getData(keywords, project);
 			
-			if(econstant.EXT_FLAG == ExtConstant.EXT_MFIE){
-				map = (Map<String, Object>) (((HistoryTree)request.getSession()
-						.getAttribute("HistoryTree")).getCurrentNode().getData());
-				
-			}else if(econstant.EXT_FLAG == ExtConstant.ORI_MFIE)
-				map = data.getData(keywords, project);
-			
-
+			map = data.getData(keywords, project);
 			List<Post> list = (List<Post>) map.get("data");
 			Post post = null;
 			if (list != null)
@@ -191,14 +192,15 @@ public class StackOverflowSearchServlet extends HttpServlet
 					if (String.valueOf(p.getPostId()).equals(value))
 					{
 						post = p;
-//						PostDAOImpl pdi = new PostDAOImpl();
-//						try {
-//							post.setAnswerList(pdi.findRelatedAnswers(post.getPostId()));
-//							post.setCommentList(pdi.findRelatedComments(post.getPostId()));
-//						} catch (Exception e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
+						PostDAOImpl pdi = new PostDAOImpl();
+						try {
+							post.setCommentList(pdi.findRelatedComments(post.getPostId()));
+							post.setAnswerList(pdi.findRelatedAnswers(post.getPostId()));
+
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}else{

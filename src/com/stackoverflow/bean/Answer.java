@@ -4,7 +4,16 @@ import java.io.Serializable;
 
 public class Answer extends Post implements Serializable
 {
+	boolean accepted;
 	
+	public boolean isAccepted() {
+		return accepted;
+	}
+
+	public void setAccepted(boolean accepted) {
+		this.accepted = accepted;
+	}
+
 	public Answer(int postId,String post_title,String post_body,String post_tag,
 			int post_comment_count,int parentId,int post_answer_count,int accepted_answerId,String focus,String environment)
 	{
