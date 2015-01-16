@@ -41,6 +41,7 @@ public class GetStackOverflowDataService
 
 	HttpSession session;
 	ProjectService projectService;
+	List<Post> postList = null;
 	public GetStackOverflowDataService(int type){
 		
 //		projectService = new ProjectService(type);
@@ -50,6 +51,11 @@ public class GetStackOverflowDataService
 	{
 //		projectService = ProjectService.getInstance();
 
+	}
+	
+	public List<Post> getListPost()
+	{
+		return this.postList;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -82,7 +88,6 @@ public class GetStackOverflowDataService
 		
 //		List<Element> elementList = null;
 //		SearchResultService  srs = new SearchResultService();
-		List<Post> postList = null;
 //		List<Facet> facetItemList = null;
 		List<Cluster> clusterByContentList = null;
 		List<Cluster> clusterByTagList = null;
@@ -248,8 +253,8 @@ public class GetStackOverflowDataService
 		map.put("focusFacet", focusTree);
 		JSONArray environmentFacet = JSONArray.fromObject(tree.getEnvironmentJSONString());
 		map.put("environmentFacet", environmentFacet);
-		JSONArray topicCalledByTree = JSONArray.fromObject(tree.getTopicCalledByJSONString());
-		map.put("topicCalledByTree", topicCalledByTree);
+//		JSONArray topicCalledByTree = JSONArray.fromObject(tree.getTopicCalledByJSONString());
+//		map.put("topicCalledByTree", topicCalledByTree);
     	JSONArray packageTree = JSONArray.fromObject(tree.getTagJSONString());
     	map.put("packageTree", packageTree);
     	JSONArray typeTree = JSONArray.fromObject(tree.getContentJSONString());
@@ -260,8 +265,8 @@ public class GetStackOverflowDataService
 //    	map.put("callTree", callTree);
 		
 		//Added feature.
-		JSONArray vHistoryTree = JSONArray.fromObject(tree.getVHistoryJSONString());
-		map.put("vHistoryTree", vHistoryTree);
+//		JSONArray vHistoryTree = JSONArray.fromObject(tree.getVHistoryJSONString());
+//		map.put("vHistoryTree", vHistoryTree);
 		
 //		JSONArray accessTree = JSONArray.fromObject(tree.getAccessJSONString());
 //		map.put("accessTree", accessTree);

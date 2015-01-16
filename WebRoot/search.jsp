@@ -536,6 +536,7 @@ var projectName = "";
 		}
 		function filterSelected()
 		{
+
 			getVal();
 			$("#result > ol > div").hide(); //hide all candidates
 
@@ -553,10 +554,14 @@ var projectName = "";
 		    	allSelectedItems = allSelectedItems.substring(index2+1, allSelectedItems.length);
 		    	index1 = allSelectedItems.indexOf("&");
 		    };
-		    if(isMultitreeSelected()) ids=getArray(ids); 
-		   	for(var id in ids)
-		   		$("#" + id).show();
-		    
+		    if(isMultitreeSelected()) 
+		    	ids=getArray(ids); 
+		    for(var i = 0; i< ids.length;i++)
+		   	{
+		   		$("#" + ids[i]).show();
+		   	}
+		   		
+
 			/*
 
 			for(item in selectedItems)
@@ -573,8 +578,17 @@ var projectName = "";
 					
 				};			
 			}*/
+<<<<<<< HEAD
 		//	$("#resultCount").html($("#result > ol > li:visible").length + " results");
 		    $("#resultCount").html(ids.length + " results");
+=======
+		//	$("#resultCount").html($("#result > ol > div").length + " results");
+			$("#resultCount").html(ids.length + " results");
+/* 			if(isMultitreeSelected()) 
+				$("#resultCount").html(ids.length + " results");
+			else
+				$("#resultCount").html(num + " results"); */
+>>>>>>> 6a814358de0e52705423dfd90f62779e88caf4e6
 		}
 
 		var nothing = "-1";

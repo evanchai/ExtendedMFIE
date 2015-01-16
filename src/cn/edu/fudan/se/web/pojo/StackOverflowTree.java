@@ -526,6 +526,7 @@ public class StackOverflowTree
 	
 	private String getFocusJSONString(List<Post> postList)
 	{
+		System.out.println("jqtok1");
 		StringBuilder sb = new StringBuilder();
 		HashMap<String,List<Post>> facetPost = new HashMap<String,List<Post>>();
 		for(Post post:postList)
@@ -569,7 +570,7 @@ public class StackOverflowTree
 			{
 				sb.append("{text: " + quote);
 				sb.append(post.post_title.replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", ""));
+						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&",""));
 				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 				sb.append("&"+post.postId +"&");
 				sb.append("</span>");
@@ -584,6 +585,7 @@ public class StackOverflowTree
 		if (sb.length() > 3)
 			sb.delete(sb.length() - 2, sb.length());
 		sb.append("]");
+		System.out.println("jqtok2");
 		return sb.toString();
 	}
 	
@@ -631,7 +633,7 @@ public class StackOverflowTree
 			{
 				sb.append("{text: " + quote);
 				sb.append(post.post_title.replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", ""));
+						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&", ""));
 				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 				sb.append("&"+post.postId +"&");
 				sb.append("</span>");
@@ -670,7 +672,7 @@ public class StackOverflowTree
 					Post post = document.getField("post");
 					sb.append("{text: " + quote);
 					sb.append(post.post_title.replace("{", "")
-							.replace("}", "").replace("[", "").replace("]", "").replace("'", ""));
+							.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&",""));
 					sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 					sb.append("&"+post.postId +"&");
 					sb.append("</span>");
@@ -709,7 +711,7 @@ public class StackOverflowTree
 					Post post = document.getField("post");
 					sb.append("{text: " + quote);
 					sb.append(post.post_title.replace("{", "")
-							.replace("}", "").replace("[", "").replace("]", "").replace("'", ""));
+							.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&",""));
 					sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 					sb.append("&"+post.postId +"&");
 					sb.append("</span>");
@@ -772,10 +774,10 @@ public class StackOverflowTree
 		
 	}
 
-	public Object getTopicCalledByJSONString()
-	{
-		return getFocusJSONString(postList);
-	}
+//	public Object getTopicCalledByJSONString()
+//	{
+//		return getFocusJSONString(postList);
+//	}
 
 	public String getEnvironmentJSONString()
 	{
@@ -798,10 +800,10 @@ public class StackOverflowTree
 	}
 
 
-	public Object getVHistoryJSONString() {
-		
-		return getFocusJSONString(postList);
-	}
+//	public Object getVHistoryJSONString() {
+//		
+//		return getFocusJSONString(postList);
+//	}
 	
 	public static MiddleData getHistoryData(Element e){
 		MiddleData m = null;
@@ -831,10 +833,10 @@ public class StackOverflowTree
 		return m;
 	}
 
-	public String getTypeJSONString(String projectName)
-	{
-		return getFocusJSONString(postList);
-	}
+//	public String getTypeJSONString(String projectName)
+//	{
+//		return getFocusJSONString(postList);
+//	}
 
 	private String getTypeNodeJSONString(TypeNode typeNode)
 	{
