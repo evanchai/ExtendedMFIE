@@ -163,6 +163,7 @@ border-radius: 4px;
 javascript:window.history.forward(1);
 
 var managerVHistory,managerPackage,managerType,managerCalledBy,managerCall,managerAccess,managerTopic, managerTopicCall,managerTopicCalledBy;
+var managerlanauageTree;
 var currentFacetButton;
 var projectName = ""; 
 		$(function() {
@@ -192,52 +193,29 @@ var projectName = "";
 			
 	    	$("#focusFacet").ligerTree({ data: ${map.focusFacet}, onCheck:filterSelected});			
 			$("#environmentFacet").ligerTree({ data: ${map.environmentFacet},onCheck: filterSelected});
-	    //	$("#languageFacet").ligerTree({ data: ${map.topicCalledByTree} , onCheck: filterTopicCalledBy});
+			$("#languageFacet").ligerTree({ data: ${map.environmentFacet},onCheck: filterSelected});
 			$("#tagFacet").ligerTree({ data: ${map.packageTree},onCheck: filterSelected});			
 			$("#contentFacet").ligerTree({ data: ${map.typeTree},onCheck: filterSelected});			
-		//	$("#vHistoryTree").ligerTree({ data: ${map.vHistoryTree} , onCheck: filterVHistory});
-	
-		//jqt	
-	//		$("#calledByTree").ligerTree({ data: ${map.calledByTree} , onCheck: filterCallBy});
-	//		$("#callerTree").ligerTree({ data: ${map.callTree} , onCheck: filterCall});
-	//		$("#accessTree").ligerTree({ data: ${map.accessTree} , onCheck: filterAccess});
 		
 	
-		//jqt
-			 managerPackage = $("#tagFacet").ligerGetTreeManager();
+			managerPackage = $("#tagFacet").ligerGetTreeManager();
 			managerPackage.collapseAll();			 
-			 managerType = $("#contentFacet").ligerGetTreeManager();
+			managerType = $("#contentFacet").ligerGetTreeManager();
 			managerType.collapseAll();	
-		//jqt	
+			managerTopic = $("#focusFacet").ligerGetTreeManager();//对树进行管理的API
+			managerTopic.collapseAll();
+			managerTopicCall = $("#environmentFacet").ligerGetTreeManager();
+			managerTopicCall.collapseAll();
+			managerlanauageTree = $("#languageFacet").ligerGetTreeManager();
+			managerlanauageTree.collapseAll();
 			
-/* 			 managerCalledBy = $("#calledByTree").ligerGetTreeManager();
-			managerCalledBy.collapseAll();
-			 managerCall = $("#callerTree").ligerGetTreeManager();
-			 managerCall.collapseAll();
-			 managerAccess = $("#accessTree").ligerGetTreeManager();
-			 managerAccess.collapseAll(); */
-			 
-			 managerTopic = $("#focusFacet").ligerGetTreeManager();//对树进行管理的API
-			 managerTopic.collapseAll();
-			 //jqt
-			 managerTopicCall = $("#environmentFacet").ligerGetTreeManager();
-			 managerTopicCall.collapseAll();
-		/*  	 managerTopicCalledBy = $("#languageFacet").ligerGetTreeManager();
-			  managerTopicCalledBy.collapseAll(); */
-	/* 		 managerVHistory = $("#vHistoryTree").ligerGetTreeManager();
-		     managerVHistory.collapseAll(); */
-	
-			 $( "#tabs-content" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
-			//jqt
-	//		 $( "#tabs-context" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
-			//jqt
-			 $( "#tabTopic" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
-			//jqt
-			 	 
+			$( "#tabTopic" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
+			$( "#tabEnviroment" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
+			$( "#tabs-content" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
+			
 		});
 		
 	var allSelectedItems = "";
-	var multiTreeSelected = false;
 		function getVal(){
 
 			allSelectedItems ="";
@@ -250,6 +228,7 @@ var projectName = "";
     	$("#valueOfVHistory").val(textVHistory); */
 		   	var topics = managerTopic.getChecked();
        		
+       		//get Focus tree val
             var textTopic = "";
             for (var i = 0; i < topics.length; i++)
             {
@@ -257,7 +236,8 @@ var projectName = "";
             }
             allSelectedItems = textTopic + allSelectedItems; 
             $("#topicTree1").val(textTopic);
-            
+        		
+        	//get System Enviroment tree val            
             var notes = managerTopicCall.getChecked();
             var text1 = "";
             for (var i = 0; i < notes.length; i++)
@@ -268,15 +248,18 @@ var projectName = "";
              $("#topicCallTree1").val(text1);
             allSelectedItems = text1 + allSelectedItems;
             
-/*             notes = managerTopicCalledBy.getChecked();
-            text1 = "";
-            for (var i = 0; i < notes.length; i++)
+            //get Language Enviroment tree val
+            var lanaguageTree = managerlanauageTree.getChecked();
+            var lanaguage = "";
+            for (var i = 0; i < lanaguageTree.length; i++)
             {
                 
-                text1 += notes[i].data.text + "@";
+                lanaguage += lanaguageTree[i].data.text + "@";
             }
-             $("#topicCalledByTree1").val(text1); */
-       //     allSelectedItems = text1 + allSelectedItems;
+             $("#valueOfLanguageTree").val(lanaguage);
+            allSelectedItems = lanaguage + allSelectedItems;
+            
+            //get tag tree val            
   		    var notes = managerPackage.getChecked();
             text1 = "";
             for (var i = 0; i < notes.length; i++)
@@ -287,6 +270,7 @@ var projectName = "";
             
             $("#valueOfPackageTree").val(text1);
             
+            //get content tree val                       
             var notes2 = managerType.getChecked();
             var text2 = "";
             for (var i = 0; i < notes2.length; i++)
@@ -295,35 +279,6 @@ var projectName = "";
             }
             allSelectedItems = text2 + allSelectedItems;
             $("#valueOfTypeTree").val(text2);
-     
-     /*         var notes8 = managerCalledBy.getChecked();
-            var text8 = "";
-            for (var i = 0; i < notes8.length; i++)
-            {
-                
-                text8 += notes8[i].data.text + ";";
-            }
-            allSelectedItems = text8 + allSelectedItems;
-            $("#valueOfCalledBy").val(text8);
-            
-             var notes9 = managerCall.getChecked();
-            var text9 = "";
-            for (var i = 0; i < notes9.length; i++)
-            {
-                
-                text9 += notes9[i].data.text + ";";
-            }
-            allSelectedItems = text9 + allSelectedItems;
-             $("#valueOfCall").val(text9);
-             var notes10 = managerAccess.getChecked();
-            var text10 = "";
-            for (var i = 0; i < notes10.length; i++)
-            {
-                
-                text10 += notes10[i].data.text + ";";
-            }
-            allSelectedItems = text10 + allSelectedItems;
-             $("#valueOfAccess").val(text10); */
             return true;
 		}
 	</script>
@@ -422,89 +377,6 @@ var projectName = "";
 			
 			filterSelected();
 		}
-		
-		function filterTopicCall()
-		{
-			$('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
-			if( getParentID(this) !="environmentFacet")
-				this.className="l-box l-checkbox l-checkbox-unchecked";
-			});
-			currentFacetButton = "btnCallTopic";
-			filterSelected();
-		}
-		
-		function filterTopicCalledBy()
-		{
-			$('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
-			if( getParentID(this) !="languageFacet")
-				this.className="l-box l-checkbox l-checkbox-unchecked";
-			});
-			currentFacetButton = "btnCalledByTopic";
-			filterSelected();
-		}
-		
-		function filterPackage()
-		{
-		/* $('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
-			if(getParentID(this)!="tagFacet")
-				this.className="l-box l-checkbox l-checkbox-unchecked";
-			}); */
-			currentFacetButton = "btnPackage";
-			filterSelected();
-		}
-
-		function filterVHistory()
-		{
-		$('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
-			if(getParentID(this)!="vHistoryTree")
-				this.className="l-box l-checkbox l-checkbox-unchecked";
-			});
-			currentFacetButton = "btnVHisotry";
-			filterSelected();
-		}
-		
-		function filterType()
-		{
-		$('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
-			if(getParentID(this)!="contentFacet")
-				this.className="l-box l-checkbox l-checkbox-unchecked";
-			});
-			currentFacetButton = "btnType";
-			filterSelected();
-		}
-
-
-		function filterCallBy()
-		{
-		$('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
-			if(getParentID(this)!="calledByTree")
-				this.className="l-box l-checkbox l-checkbox-unchecked";
-			});
-			currentFacetButton = "btnCalledBy";
-			filterSelected();
-		}
-
-
-		function filterCall()
-		{
-		$('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
-			if(getParentID(this)!="callerTree")
-				this.className="l-box l-checkbox l-checkbox-unchecked";
-			});
-			currentFacetButton = "btnCall";
-			filterSelected();
-		}
-
-
-		function filterAccess()
-		{
-		$('div').filter('[class="l-box l-checkbox l-checkbox-checked"]').each(function (n){
-			if(getParentID(this)!="accessTree")
-				this.className="l-box l-checkbox l-checkbox-unchecked";
-			});
-			currentFacetButton = "btnAccess";
-			filterSelected();
-		}
 
 		function getArray(a) {
 		 var hash = {},
@@ -515,8 +387,7 @@ var projectName = "";
 		     if (!hash[a[i]]){
 		         hash[a[i]] = true;
 		     }
-		     else result.push(a[i]); 
-		     
+		     else result.push(a[i]);  
 		 }
 		 return result;
 		}
@@ -527,11 +398,12 @@ var projectName = "";
 			var enviroments =managerTopicCall.getChecked();
 			var tags =managerPackage.getChecked();
 			var contents =managerType.getChecked();
+			var languages = managerlanauageTree.getChecked();
 			if(focus.length>0) treeNums++;
 			if(enviroments.length>0) treeNums++;
 			if(tags.length>0) treeNums++;
 			if(contents.length>0) treeNums++;
-			
+			if(languages.length>0) treeNums++;
 			return treeNums>1;
 		}
 		function filterSelected()
@@ -578,17 +450,7 @@ var projectName = "";
 					
 				};			
 			}*/
-<<<<<<< HEAD
-		//	$("#resultCount").html($("#result > ol > li:visible").length + " results");
 		    $("#resultCount").html(ids.length + " results");
-=======
-		//	$("#resultCount").html($("#result > ol > div").length + " results");
-			$("#resultCount").html(ids.length + " results");
-/* 			if(isMultitreeSelected()) 
-				$("#resultCount").html(ids.length + " results");
-			else
-				$("#resultCount").html(num + " results"); */
->>>>>>> 6a814358de0e52705423dfd90f62779e88caf4e6
 		}
 
 		var nothing = "-1";
@@ -680,14 +542,11 @@ var projectName = "";
 						<span class="search_png">Navigate</span>
 					</div> -->
 					<!-- for topic facets -->
+					
 					<div id="tabTopic" style="width: 360px; ">
 						<ul>
 							<li><a href="#tabs-selfTopic">Focus</a>
 							</li>
-							<li><a href="#tabs-callerTopic">Environment</a>
-							</li>
-					<!-- 		<li><a href="#tabs-calleeTopic">Language</a>
-							</li> -->
 						</ul>
 						<div id="tabs-selfTopic">
 							<div class="treeview">
@@ -696,36 +555,42 @@ var projectName = "";
 							<input type="hidden" name="action" value="submit" /> <input
 								type="hidden" id="topicTree1" name="topicTree1" />
 						</div>
-						<div id="tabs-callerTopic">
+					</div>
+					
+<!-- Enviroment Facets -->
+					<div id="tabEnviroment" style="width: 360px;">
+						<ul>
+							<li><a href="#tabs-SystemEnviroment">System</a>
+							</li>
+							<li><a href="#tabs-LanguageEnviroment">Language</a>
+							</li>
+						</ul>
+
+						<div id="tabs-SystemEnviroment">
 							<div class="treeview">
 								<div id="environmentFacet"></div>
 							</div>
 							<input type="hidden" name="action" value="submit" /> <input
 								type="hidden" id="topicCallTree1" name="topicCallTree1" />
 						</div>
-		<!-- 				<div id="tabs-calleeTopic">
+						<div id="tabs-LanguageEnviroment">
 							<div class="treeview">
 								<div id="languageFacet"></div>
 							</div>
 							<input type="hidden" name="action" value="submit" /> <input
-								type="hidden" id="topicCalledByTree1" name="topicCalledByTree1" />
-						</div> -->
+								type="hidden" id="valueOfLanguageTree" name="valueOfLanguageTree" />
+						</div>
 					</div>
-
+<!-- Tag and Content Facets -->
 					<div id="tabs-content" style="width: 360px;">
 						<ul>
 							<li><a href="#tab-package">Tag</a>
 							</li>
 							<li><a href="#tab-type">Content</a>
 							</li>
-						<!-- 	<li><a href="#tab-vHistory">Code</a>
-							</li> -->
-
 						</ul>
 
 						<div id="tab-package">
-
-
 							<input type="hidden" name="action" value="submit" /> <input
 								type="hidden" id="valueOfPackageTree" name="valueOfPackageTree" />
 
@@ -733,8 +598,8 @@ var projectName = "";
 								<div id="tagFacet"></div>
 							</div>
 						</div>
+						
 						<div id="tab-type">
-
 							<input type="hidden" name="action" value="submit" /> <input
 								type="hidden" id="valueOfTypeTree" name="valueOfTypeTree" />
 
@@ -742,26 +607,8 @@ var projectName = "";
 								<div id="contentFacet"></div>
 							</div>
 						</div>
-		<!-- 				<div id="tab-vHistory">
-
-							<input type="hidden" name="action" value="submit" /> <input
-								type="hidden" id="valueOfVHistory" name="valueOfVHistory" />
-
-							<div class="treeview">
-								<div id="vHistoryTree"></div>
-							</div>
-						</div> -->
 					</div>
 
-		<!-- 			<div class="con">
-						<button id="btnType" style="margin-left:140px" class="search_btn"
-							onmouseout="this.className='search_btn'"
-							onmouseover="this.className='search_btn search_btn_hover'"
-							onclick="doUpdate()" />
-			            <span class="search_png">Update</span> <input type="hidden"
-							name="action" value="submit" /> 
-						
-					</div> -->
 
 <!--added by Luminosite 14/5/4 -->
 <div id="addedDiv" style="width:300px;height:200px" >
