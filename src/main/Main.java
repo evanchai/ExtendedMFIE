@@ -209,9 +209,7 @@ public class Main {
 	
 	public static void main(String args[])
 	{
-//		Main main = new Main("How to connect to mysql database.");
-		String s ="There's no Way(243)";
-		System.out.println(s.replace("'",""));
+		Main main = new Main("How to connect to mysql database.");
 //		main.matchFacetItem();
 //		main.showEnvironment();
 	}

@@ -42,6 +42,7 @@ public class GetStackOverflowDataService
 	HttpSession session;
 	ProjectService projectService;
 	List<Post> postList = null;
+	MultiFacets multif = new MultiFacets();
 	public GetStackOverflowDataService(int type){
 		
 //		projectService = new ProjectService(type);
@@ -117,7 +118,7 @@ public class GetStackOverflowDataService
 		
 		
 //       postList = CreateData.getData();
-		   
+//		multif.init();
 		clusterByContentList = getClusterByContent(postList);
 		clusterByTagList = getClusterByTag(postList);
 		System.out.println("size of elements " + postList.size());
@@ -128,7 +129,7 @@ public class GetStackOverflowDataService
 	public List<Cluster> getClusterByContent(List<Post> postList)
 	{
 		try {
-			return 	MultiFacets.clusteringByContent(postList);
+			return 	multif.clusteringByContent(postList);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -140,7 +141,7 @@ public class GetStackOverflowDataService
 	public List<Cluster> getClusterByTag(List<Post> postList)
 	{
 		try {
-			return MultiFacets.clusteringByTag(postList);
+			return multif.clusteringByTag(postList);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -251,6 +252,7 @@ public class GetStackOverflowDataService
 
 		JSONArray focusTree = JSONArray.fromObject(tree.getFocusJSONString());
 		map.put("focusFacet", focusTree);
+//		System.out.println(focusTree.toString());
 		JSONArray systemFacet = JSONArray.fromObject(tree.getSystemJSONString());
 		map.put("systemFacet", systemFacet);
 		JSONArray languageFacet = JSONArray.fromObject(tree.getLanguageJSONString());
