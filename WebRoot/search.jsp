@@ -163,7 +163,7 @@ border-radius: 4px;
 javascript:window.history.forward(1);
 
 var managerVHistory,managerPackage,managerType,managerCalledBy,managerCall,managerAccess,managerTopic, managerTopicCall,managerTopicCalledBy;
-var managerlanauageTree;
+var managerlanauageTree,treeSelectedNums;
 var currentFacetButton;
 var projectName = ""; 
 		$(function() {
@@ -378,33 +378,37 @@ var projectName = "";
 			filterSelected();
 		}
 
-		function getArray(a) {
+		function getArray(a,treeSelectedNums) {
 		 var hash = {},
 		     len = a.length,
 		     result = [];
 		
 		 for (var i = 0; i < len; i++){
 		     if (!hash[a[i]]){
-		         hash[a[i]] = true;
+		         hash[a[i]] = 1;
 		     }
-		     else result.push(a[i]);  
+		     else if(hash[a[i]]){
+		     	hash[a[i]]++;
+		     	var hashnum= hash[a[i]];
+		     	if(hashnum>=treeSelectedNums) result.push(a[i]);
+		     }
 		 }
 		 return result;
 		}
 		
 		function isMultitreeSelected(){
-			var treeNums = 0;
+			treeSelectedNums = 0;
 			var focus =managerTopic.getChecked();
 			var enviroments =managerTopicCall.getChecked();
 			var tags =managerPackage.getChecked();
 			var contents =managerType.getChecked();
 			var languages = managerlanauageTree.getChecked();
-			if(focus.length>0) treeNums++;
-			if(enviroments.length>0) treeNums++;
-			if(tags.length>0) treeNums++;
-			if(contents.length>0) treeNums++;
-			if(languages.length>0) treeNums++;
-			return treeNums>1;
+			if(focus.length>0) treeSelectedNums++;
+			if(enviroments.length>0) treeSelectedNums++;
+			if(tags.length>0) treeSelectedNums++;
+			if(contents.length>0) treeSelectedNums++;
+			if(languages.length>0) treeSelectedNums++;
+			return treeSelectedNums>1;
 		}
 		function filterSelected()
 		{
@@ -427,7 +431,7 @@ var projectName = "";
 		    	index1 = allSelectedItems.indexOf("&");
 		    };
 		    if(isMultitreeSelected()) 
-		    	ids=getArray(ids); 
+		    	ids=getArray(ids,treeSelectedNums); 
 		    for(var i = 0; i< ids.length;i++)
 		   	{
 		   		$("#" + ids[i]).show();
