@@ -39,9 +39,12 @@ public class MultiFacets {
 	 * @param args
 	 * @throws Exception
 	 */
+	Properties props = null;
+	StanfordCoreNLP pipeline= null;
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		PostDAOImpl postDAO = new PostDAOImpl();
+		
 		List<Post> postList = postDAO.findPosts("database");
 //		int i=0;
 //		StringBuffer sb= new StringBuffer ();
@@ -51,20 +54,22 @@ public class MultiFacets {
 //				//i++;
 //		}
 //		System.out.println(i);
-		clusteringByContent(postList);
-		clusteringByTag(postList);
+//		clusteringByContent(postList);
+//		clusteringByTag(postList);
 		//clusteringByProgarmmingLanuguage(postList);
 		//String text = "It 's the first group objective-c against.The CRF code is by Jenny Finkel. The feature extractors are by Dan Klein, Christopher Manning, and Jenny Finkel.";
 		//stanfordNLPPreProcess(text);
 	}
 
-	public static String stanfordNLPPreProcess(String text) throws Exception {
+	public void init()
+	{
+		props = new Properties();
+		props.put("annotators", "tokenize,ssplit,pos,lemma");
+		pipeline = new StanfordCoreNLP(props);
+	}
+	public  String stanfordNLPPreProcess(String text) throws Exception {
 		text.toLowerCase();
 		String Stem="";
-		
-		Properties props = new Properties();
-		props.put("annotators", "tokenize,ssplit,pos,lemma");
-		StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 		Annotation document = new Annotation(text);
 		pipeline.annotate(document);
 		
@@ -80,11 +85,10 @@ public class MultiFacets {
 				Stem +=stem+" ";
 			}
 		}
-		System.out.println(Stem);
 		return Stem;
 	}
 
-	public static List<Cluster> clusteringByContent(List<Post> postList)
+	public  List<Cluster> clusteringByContent(List<Post> postList)
 			throws Exception {
 		/* Prepare Carrot2 documents */
 		final ArrayList<Document> documents = new ArrayList<Document>();
@@ -111,13 +115,14 @@ public class MultiFacets {
 		return clustersByContent;
 	}
 
-	public static List<Cluster> clusteringByTag(List<Post> postList) throws Exception {
+	public  List<Cluster> clusteringByTag(List<Post> postList) throws Exception {
 		/* Prepare Carrot2 documents */
 		final ArrayList<Document> documents = new ArrayList<Document>();
 		documents.clear();
 		for (Post post : postList) {
-				Document doc = new Document(post.getPost_tag(), "Summary",
-						post.post_tag);
+			String tag = post.getPost_tag();
+				Document doc = new Document(tag, "Summary",
+						tag);
 				doc.setField("post", post);
 				documents.add(doc);
 			}
@@ -131,7 +136,7 @@ public class MultiFacets {
 		return clustersByTag;
 	}
 
-	public static List<Cluster> clusteringByProgarmmingLanuguage(List<Post> postList)
+	public  List<Cluster> clusteringByProgarmmingLanuguage(List<Post> postList)
 			throws Exception {
 		String[] languageSet = { "java", "javascript", "c#", "php", "jquery",
 				"python", "html", "c++", "" + "css", "objective-c", "c",

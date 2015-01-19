@@ -541,7 +541,10 @@ public class StackOverflowTree
 				if(index!=-1)
 					foc = foc.substring(index+1,foc.length());
 				if(facetPost.containsKey(foc))
+				{
 					facetPost.get(foc).add(post);
+				
+				}
 				else
 				{
 					List<Post> list = new ArrayList<Post>();
@@ -565,6 +568,8 @@ public class StackOverflowTree
 	
 			sb.append("{");
 			sb.append("text: " + quote);
+
+//			System.out.println("key:"+key);
 			sb.append(key+"("+list.size()+")");
 			sb.append(quote);
 			sb.append(", children: [");
@@ -572,6 +577,7 @@ public class StackOverflowTree
 			for(Post post:list)
 			{
 				sb.append("{text: " + quote);
+//				System.out.println(post.post_title);
 				sb.append(post.post_title.replace("{", "")
 						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&","").replace(",",""));
 				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
@@ -589,6 +595,7 @@ public class StackOverflowTree
 			sb.delete(sb.length() - 2, sb.length());
 		sb.append("]");
 		System.out.println("jqtok2");
+//		System.out.println(sb.toString());
 		return sb.toString();
 	}
 	private String getSystemJSONString(List<Post> postList)

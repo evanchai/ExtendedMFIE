@@ -324,7 +324,7 @@ public class PostDAOImpl implements PostDAO {
 		// generate query string based on separate keywords
 		// using regexp replace('keyword1,keyword2',',','|')
 		System.out.println("String:"+keywords);
-		String SQLString = "SELECT * FROM stackoverflowdata.testposts where Id>13287490 and Id<=17413643";
+		String SQLString = "SELECT * FROM stackoverflowdata.testposts where Id = 10563619";
 	//	where Id>=696 and Id<=234888
 //		String SQLString = "SELECT * FROM stackoverflowdata.posts WHERE PostTypeId = 1 and title like '%how%' and title like '%connect%' and title like '%mysql%' limit 20";
 //		String SQLString = "SELECT * FROM stackoverflowdata.posts WHERE CONCAT(title,tags,body) like '"
