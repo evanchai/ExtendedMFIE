@@ -202,8 +202,8 @@ public class Main {
 				if(pft.language.equals(""))
 					pft.language = "Others";
 			}
-		PostDAOImpl pdi = new PostDAOImpl();
-		pdi.Update(hashpft);
+//		PostDAOImpl pdi = new PostDAOImpl();
+//		pdi.Update(hashpft);
 	}
 
 	

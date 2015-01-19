@@ -595,7 +595,7 @@ public class StackOverflowTree
 			sb.delete(sb.length() - 2, sb.length());
 		sb.append("]");
 		System.out.println("jqtok2");
-//		System.out.println(sb.toString());
+		System.out.println(sb.toString());
 		return sb.toString();
 	}
 	private String getSystemJSONString(List<Post> postList)

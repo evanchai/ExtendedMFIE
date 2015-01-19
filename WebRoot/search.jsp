@@ -210,7 +210,7 @@ var projectName = "";
 			managerlanauageTree.collapseAll();
 			
 			$( "#tabTopic" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
-			$( "#tabEnviroment" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
+	    	$( "#tabEnviroment" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
 			$( "#tabs-content" ).tabs().find( ".ui-tabs-nav" ).sortable({ axis: "x" });
 			
 		});
