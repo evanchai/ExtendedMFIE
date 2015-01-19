@@ -165,6 +165,7 @@ javascript:window.history.forward(1);
 var managerVHistory,managerPackage,managerType,managerCalledBy,managerCall,managerAccess,managerTopic, managerTopicCall,managerTopicCalledBy;
 var managerlanauageTree,treeSelectedNums;
 var currentFacetButton;
+var allSelectedItems,treeSelectedHashTable;
 var projectName = ""; 
 		$(function() {
      	$("#txt3").ligerComboBox({
@@ -215,17 +216,10 @@ var projectName = "";
 			
 		});
 		
-	var allSelectedItems = "";
 		function getVal(){
 
 			allSelectedItems ="";
-/* 		var vHistoryChecked = managerVHistory.getChecked();
-		var textVHistory = "";
-		for(var i=0; i<vHistoryChecked.length;i++){
-			textVHistory += vHistoryChecked[i].data.text+"@";
-		}
-		allSelectedItems = textVHistory + allSelectedItems;
-    	$("#valueOfVHistory").val(textVHistory); */
+			treeSelectedHashTable ={};
 		   	var topics = managerTopic.getChecked();
        		
        		//get Focus tree val
@@ -235,6 +229,7 @@ var projectName = "";
 		      textTopic += topics[i].data.text + "@";
             }
             allSelectedItems = textTopic + allSelectedItems; 
+            treeSelectedHashTable["focus"] = textTopic;
             $("#topicTree1").val(textTopic);
         		
         	//get System Enviroment tree val            
@@ -246,6 +241,7 @@ var projectName = "";
                 text1 += notes[i].data.text + "@";
             }
              $("#topicCallTree1").val(text1);
+            treeSelectedHashTable["system"] = text1;
             allSelectedItems = text1 + allSelectedItems;
             
             //get Language Enviroment tree val
@@ -257,6 +253,7 @@ var projectName = "";
                 lanaguage += lanaguageTree[i].data.text + "@";
             }
              $("#valueOfLanguageTree").val(lanaguage);
+            treeSelectedHashTable["lanaguage"] = lanaguage;
             allSelectedItems = lanaguage + allSelectedItems;
             
             //get tag tree val            
@@ -266,8 +263,8 @@ var projectName = "";
             {
                 text1 += notes[i].data.text + "@";
             }
+            treeSelectedHashTable["tag"] = text1;
             allSelectedItems = text1 + allSelectedItems;
-            
             $("#valueOfPackageTree").val(text1);
             
             //get content tree val                       
@@ -278,6 +275,7 @@ var projectName = "";
                 text2 += notes2[i].data.text + "@";
             }
             allSelectedItems = text2 + allSelectedItems;
+            treeSelectedHashTable["content"] = text2;
             $("#valueOfTypeTree").val(text2);
             return true;
 		}
@@ -396,6 +394,19 @@ var projectName = "";
 		 return result;
 		}
 		
+		function deduplicated(a) {		
+		 var hash = {},
+     		 len = a.length,
+     	     result = [];
+
+		 for (var i = 0; i < len; i++){
+		     if (!hash[a[i]]){
+		         hash[a[i]] = true;
+		         result.push(a[i]);
+		     } 
+		 }		
+		 return result;
+		}
 		function isMultitreeSelected(){
 			treeSelectedNums = 0;
 			var focus =managerTopic.getChecked();
@@ -410,13 +421,10 @@ var projectName = "";
 			if(languages.length>0) treeSelectedNums++;
 			return treeSelectedNums>1;
 		}
-		function filterSelected()
+		
+		function SelectedIds(allSelectedItems)
 		{
-
-			getVal();
-			$("#result > ol > div").hide(); //hide all candidates
-
-		    var index1 = allSelectedItems.indexOf("&");
+			var index1 = allSelectedItems.indexOf("&");
 			var num = 0;
 			var ids= new Array();
 		    while(index1!=-1)
@@ -430,13 +438,31 @@ var projectName = "";
 		    	allSelectedItems = allSelectedItems.substring(index2+1, allSelectedItems.length);
 		    	index1 = allSelectedItems.indexOf("&");
 		    };
+		    return ids;
+		}
+		function filterSelected()
+		{
+
+			getVal();
+			$("#result > ol > div").hide(); //hide all candidates
+			
+			var ids = new Array();
+			for(var facet in treeSelectedHashTable){
+			    //convert selected String to Array
+				var facetIds = SelectedIds(treeSelectedHashTable[facet]);
+				//make array deduplicated
+				facetIds = deduplicated(facetIds);
+				//concat all arrays
+				ids=ids.concat(facetIds);
+			}
+			 
+			//var ids= SelectedIds(allSelectedItems);
 		    if(isMultitreeSelected()) 
 		    	ids=getArray(ids,treeSelectedNums); 
 		    for(var i = 0; i< ids.length;i++)
 		   	{
 		   		$("#" + ids[i]).show();
 		   	}
-		   		
 
 			/*
 
