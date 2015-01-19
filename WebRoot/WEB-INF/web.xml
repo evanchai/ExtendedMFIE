@@ -43,7 +43,7 @@
     	<servlet-name>ResultSetServlet</servlet-name>
     	<url-pattern>/ResultSetServlet</url-pattern>
   </servlet-mapping>
-    <listener>
+  <listener>
     <listener-class>cn.edu.fudan.se.web.action.SessionListener</listener-class>
   </listener>
   
