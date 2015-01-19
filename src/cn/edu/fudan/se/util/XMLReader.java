@@ -3,7 +3,7 @@ package cn.edu.fudan.se.util;
 import org.dom4j.*;
 import org.dom4j.io.*;
 
-import cn.edu.fudan.se.environment.Environment;
+import cn.edu.fudan.se.facet.ClassifyPost;
 import cn.edu.fudan.se.facet.Model;
 
 import java.io.*;
@@ -28,7 +28,7 @@ public class XMLReader {
          		 List<Element> element = fac.elements();
          		 for(Element ele1:element)
          		 {
-         			Environment environment = new Environment(ele1.getName(),ele1.elementText("Item"));
+         			ClassifyPost cp = new ClassifyPost(ele1.getName(),ele1.elementText("Item"));
          			
 //         			Element model = ele1.element("Model");
          			

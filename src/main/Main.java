@@ -1,5 +1,6 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,10 +14,10 @@ import cn.edu.fudan.se.NLP.TestCoreNLP;
 import cn.edu.fudan.se.facet.Facet;
 import cn.edu.fudan.se.facet.Grade;
 import cn.edu.fudan.se.facet.InitFacetItem;
+import cn.edu.fudan.se.facet.PostFacetType;
 import cn.edu.fudan.se.filter.FilterPost;
 import cn.edu.fudan.se.result.Result;
 import cn.edu.fudan.se.util.Global;
-import cn.edu.fudan.se.util.PostFacetType;
 
 
 public class Main {
@@ -42,9 +43,13 @@ public class Main {
 //		FilterPost.setFilterTag("database");
  		tcNLP = new TestCoreNLP();
 	    result = new Result(nlpQuery(query));
-	    System.out.println(nlpQuery(query));
-//		result.setQueryToken(qt.getToken());
+
 		postList = result.getPosts();
+ 		
+// 		postList = new ArrayList<Post>();
+// 		String title = "What is the easiest way to duplicate an activerecord record?";
+// 		String body = "";
+// 		postList.add(new Post(0,title,body,"configure",0,1,0,0,null,null));
 		System.out.println("Size:"+postList.size());
 		ift = new InitFacetItem();
 		itemList = ift.getItem();
@@ -70,15 +75,13 @@ public class Main {
 			   item.setIsMatch(false);
 			   
 		   }
-		   if(post.parentId != 0)
-			   continue;
 		   postNum++;
-		   System.out.println("NUM:"+postNum);
+		   System.out.println("NUM:"+postNum+"|"+post.postId);
 		
 //           if(postNum == 29||postNum == )
 //        	   continue;
 		   String text = post.getText((post.post_body_text));
-		   text = post.post_title +". " + text;
+		   text = post.post_title +"." + text;
 		   if(text.length() > 1000)//�ַ�˵����1500��nlp��ջ���
 			   text = text.substring(0,1000);
 		   tcNLP.CoreNLP(text);
@@ -91,7 +94,15 @@ public class Main {
 
 	   }
 	}
-	
+	public boolean contain(List<PostFacetType> pftList,int Id)
+	{
+		for(PostFacetType pft:pftList)
+		{
+			if(pft.postId == Id)
+				return true;
+		}
+		return false;
+	}
 	public void showEnvironment()
 	{
 		for(Facet item:itemList)
@@ -102,9 +113,9 @@ public class Main {
 			
 		    System.out.println("----------------");
 		}
-		List<PostFacetType> pftList = Global.postFT;
-		for(PostFacetType pft:pftList)
-		{
+//		List<PostFacetType> pftList = new ArrayList<PostFacetType>();
+		HashMap<Integer,PostFacetType> hashpft = new HashMap<Integer,PostFacetType>();
+	
 			for(Facet item:itemList)
 			{
 				HashMap<Post,Grade> postM = item.getPost();
@@ -116,33 +127,83 @@ public class Main {
 				{
 					Post post = (Post) iter.next();
 					if(item.getEnvir().contains("Configuration")||
-							item.getEnvir().contains("Exception"))
+							item.getEnvir().contains("Exception")||
+							item.getEnvir().contains("Code")||
+							item.getEnvir().contains("Design"))
 					{
-						if(post.postId == pft.postId)
+						if(!hashpft.containsKey(post.postId))
 						{
-							pft.focus = item.getEnvir();
+							PostFacetType pft = new PostFacetType();
+							pft.focus += item.getEnvir()+",";
+							pft.postId = post.postId;
+							pft.postTypeId = 1;					   
+						    hashpft.put(post.postId, pft);
+						}else
+						{
+							PostFacetType pft = hashpft.get(post.postId);
+							
+							pft.focus += item.getEnvir() +",";
 						}
-					}else if(item.getEnvir().contains("Language")||
-							item.getEnvir().contains("Database")||
-							item.getEnvir().contains("System"))
+						
+						
+					}
+					if(item.getEnvir().contains("Language"))
 					{
-						if(post.postId == pft.postId)
+						if(!hashpft.containsKey(post.postId))
 						{
-							pft.environment = item.getEnvir();
+							PostFacetType pft = new PostFacetType();
+							pft.language += item.getEnvir()+",";
+							pft.postId = post.postId;
+							pft.postTypeId = 1;					   
+						    hashpft.put(post.postId, pft);
+						}else
+						{
+							PostFacetType pft = hashpft.get(post.postId);
+							pft.language += item.getEnvir()+",";
+						}
+					}
+					if(item.getEnvir().contains("System"))
+					{
+						if(!hashpft.containsKey(post.postId))
+						{
+							PostFacetType pft = new PostFacetType();
+							pft.system += item.getEnvir()+",";
+							pft.postId = post.postId;
+							pft.postTypeId = 1;					   
+						    hashpft.put(post.postId, pft);
+						}else
+						{
+							PostFacetType pft = hashpft.get(post.postId);
+							pft.system += item.getEnvir()+",";
 						}
 					}
 				}
 			}
-		}
-		for(PostFacetType pft:pftList)
-		{
-			if(pft.focus == null)
-				pft.focus = "Others";
-			if(pft.environment == null)
-				pft.environment = "Others";
-		}
+			
+			for(Integer id:Global.intList)
+			{
+				if(!hashpft.containsKey(id))
+				{
+					PostFacetType p = new PostFacetType();
+					p.postId = id;
+					p.postTypeId = 1;
+					hashpft.put(id, p);
+				}
+			}
+			Iterator iter = hashpft.keySet().iterator();
+			
+			while (iter.hasNext())
+			{
+				PostFacetType pft = (PostFacetType) hashpft.get(iter.next());
+				if(pft.focus.equals(""))
+					pft.focus = "Others";
+				if(pft.system.equals(""))
+					pft.system = "Others";
+				if(pft.language.equals(""))
+					pft.language = "Others";
+			}
 		PostDAOImpl pdi = new PostDAOImpl();
-		pdi.Update(pftList);
+		pdi.Update(hashpft);
 	}
 
 	

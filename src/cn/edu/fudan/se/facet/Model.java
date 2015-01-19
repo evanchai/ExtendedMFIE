@@ -10,10 +10,13 @@ public class Model {
 	private String[] domainVerb;
 	private String[] code;	
 	private String effect;
+	private String question;
+	private String tense;
+	private String state;
 	public Model(String domainS,String domainP,String domainO,
 			String propertyS,String propertyP
 			,String propertyO,String domainVerb
-			,String code,String effect)
+			,String code,String effect,String question,String tense,String state)
 	{
 		this.domainDicS = domainS.split(",");
 		this.domainDicP = domainP.split(",");
@@ -24,6 +27,9 @@ public class Model {
 		this.domainVerb = domainVerb.split(",");
 		this.code = code.split(",");
 		this.effect = effect;
+		this.question = question;
+		this.tense = tense;
+		this.state = state;
 	}
 	
 	public String[] getDomainDicS()
@@ -61,6 +67,18 @@ public class Model {
 	public String getEffect()
 	{
 		return effect;
+	}
+	public String getQuestion()
+	{
+		return question;
+	}
+	public String getTense()
+	{
+		return tense;
+	}
+	public String getState()
+	{
+		return state;
 	}
 
 }

@@ -47,7 +47,7 @@ public class Global {
 	public static String accept = "ACCEPT";
 	public static String deny = "DENY";
 	
-	public static List<PostFacetType> postFT = new ArrayList<PostFacetType>();
+    public static List<Integer> intList = new ArrayList<Integer>();
 
 
 }

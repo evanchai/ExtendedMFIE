@@ -2,11 +2,13 @@ package com.stackoverflow.utils;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import cn.edu.fudan.se.facet.PostFacetType;
 import cn.edu.fudan.se.filter.FilterPost;
 import cn.edu.fudan.se.util.Global;
-import cn.edu.fudan.se.util.PostFacetType;
 
 import com.stackoverflow.bean.*;
 import com.stackoverflow.utils.DBConnection;
@@ -127,7 +129,7 @@ public class PostDAOImpl implements PostDAO {
 				int accepted_answerId = rs.getInt("AcceptedAnswerId");//may be null
 				
 				answers.add(new Answer(postId,post_title,post_body,post_tag,
-						post_comment_count,parentId,post_answer_count,accepted_answerId,null,null));
+						post_comment_count,parentId,post_answer_count,accepted_answerId,null,null,null));
 			}		
 			} catch (Exception ex) {
 			System.out.println("Error : " + ex.toString());
@@ -163,7 +165,7 @@ public class PostDAOImpl implements PostDAO {
 				int accepted_answerId = rs.getInt("AcceptedAnswerId");//may be null
 				
 				resultQuestion=new Question(postId,post_title, post_body,post_tag,
-						post_comment_count,parentId,post_answer_count,accepted_answerId,null,null);
+						post_comment_count,parentId,post_answer_count,accepted_answerId,null,null,null);
 			}		} catch (Exception ex) {
 			System.out.println("Error : " + ex.toString());
 		} finally {
@@ -182,7 +184,8 @@ public class PostDAOImpl implements PostDAO {
 			id++;
 			int postId = rs.getInt("postFacetType.PostId");
 			String focus = rs.getString("Focus");
-			String environment = rs.getString("Environment");
+			String system = rs.getString("System");
+			String language = rs.getString("Language");
 			int post_typeId = rs.getInt("PostTypeId");
 			String post_title = rs.getString("title");
 
@@ -204,22 +207,19 @@ public class PostDAOImpl implements PostDAO {
 			switch (post_typeId) {
 			case 1: {
 				Question question = new Question(postId,post_title,post_body,post_tag,post_comment_count
-						,parentId,post_answer_count,accepted_answerId,focus,environment);
+						,parentId,post_answer_count,accepted_answerId,focus,system,language);
 //				//generate commentList and AnswerList 
 //				if(question.getPost_comment_count()>0)
 //					question.setCommentList(this.findRelatedComments(question.getPostId()));
 //				if(question.getPost_answer_count()>0)
 //					question.setAnswerList(this.findRelatedAnswers(question.getPostId()));
-				PostFacetType pft = new PostFacetType();
-				pft.postId = postId;
-				pft.postTypeId = post_typeId;
-				Global.postFT.add(pft);
+	
 				posts.add(question);
 				break;
 			}
 			case 2: {
 				Answer answer = new Answer(postId,post_title,post_body
-						,post_tag,post_comment_count,parentId,post_answer_count,accepted_answerId,focus,environment);
+						,post_tag,post_comment_count,parentId,post_answer_count,accepted_answerId,focus,system,language);
 				
 //				//generate commentList and parent Question 
 //				if(answer.getPost_comment_count()>0)
@@ -272,22 +272,19 @@ public class PostDAOImpl implements PostDAO {
 			switch (post_typeId) {
 			case 1: {
 				Question question = new Question(postId,post_title, post_body,post_tag,post_comment_count
-						,parentId,post_answer_count,accepted_answerId,focus,environment);
+						,parentId,post_answer_count,accepted_answerId,null,null,null);
 //				//generate commentList and AnswerList 
 //				if(question.getPost_comment_count()>0)
 //					question.setCommentList(this.findRelatedComments(question.getPostId()));
 //				if(question.getPost_answer_count()>0)
 //					question.setAnswerList(this.findRelatedAnswers(question.getPostId()));
-				PostFacetType pft = new PostFacetType();
-				pft.postId = postId;
-				pft.postTypeId = post_typeId;
-				Global.postFT.add(pft);
+				Global.intList.add(postId);
 				posts.add(question);
 				break;
 			}
 			case 2: {
 				Answer answer = new Answer(postId,post_title,post_body
-						,post_tag,post_comment_count,parentId,post_answer_count,accepted_answerId,focus,environment);
+						,post_tag,post_comment_count,parentId,post_answer_count,accepted_answerId,null,null,null);
 				
 //				//generate commentList and parent Question 
 //				if(answer.getPost_comment_count()>0)
@@ -327,8 +324,8 @@ public class PostDAOImpl implements PostDAO {
 		// generate query string based on separate keywords
 		// using regexp replace('keyword1,keyword2',',','|')
 		System.out.println("String:"+keywords);
-		String SQLString = "SELECT * FROM stackoverflowdata.testposts where Id >5761791 and Id <= 6118473";
-		
+		String SQLString = "SELECT * FROM stackoverflowdata.testposts where Id>13287490 and Id<=17413643";
+	//	where Id>=696 and Id<=234888
 //		String SQLString = "SELECT * FROM stackoverflowdata.posts WHERE PostTypeId = 1 and title like '%how%' and title like '%connect%' and title like '%mysql%' limit 20";
 //		String SQLString = "SELECT * FROM stackoverflowdata.posts WHERE CONCAT(title,tags,body) like '"
 //				+ "sort%" +"'" +"or CONCAT(title,tags,body) like 'list%'";
@@ -345,7 +342,7 @@ public class PostDAOImpl implements PostDAO {
 		}
 		return posts;
 	}
-	public void Update(List<PostFacetType> pftList)
+	public void Update(HashMap<Integer,PostFacetType> hashpft)
 	{ 
 		Connection conn = null;
 		Statement stat = null;
@@ -359,11 +356,14 @@ public class PostDAOImpl implements PostDAO {
 		try 
 	   { //4.发送SQL语句进行数据更新
 			stat = conn.createStatement();
-			int id = 969;
-			for(PostFacetType pft:pftList)
+			int id = 928;
+             Iterator iter = hashpft.keySet().iterator();
+			
+			while (iter.hasNext())
 			{
+				PostFacetType pft = (PostFacetType) hashpft.get(iter.next());
 				String sql = "insert into stackoverflowdata.postFacetType values("+id +","+ pft.postId +","+ pft.postTypeId +",'"+pft.focus+"','"+
-			   pft.environment+ "','"+pft.tag+"','"+pft.content+"','"+pft.code+"');";
+			   pft.system+"','"+pft.language+ "','"+pft.tag+"','"+pft.content+"','"+pft.code+"');";
 				stat.executeUpdate(sql);
 				id++;
 			}

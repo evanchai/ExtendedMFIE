@@ -103,8 +103,8 @@ public class TestCoreNLP {
 		
 		for(CoreMap sentence:sentences)
 		{
-		  if(sentence.toString().length() <= 30)
-		 	 continue;
+//		  if(sentence.toString().length() <= 30)
+//		 	 continue;
 		   Sentence sen = new Sentence();
 		   sen.setSentence(sentence.toString());
 		   sentenceList.add(sen);
@@ -131,9 +131,8 @@ public class TestCoreNLP {
 			List<List<WordProperty>> translateList = translateClause(splitList);
 			List<List<WordProperty>> replacePronounList = replaceClausePronoun(translateList);
 			extractSentenceComponents(replacePronounList,sen);
-//			System.out.println("subject:" + getSubject(wordProperty) 
-//					+ " verbGroup:" + getVerbGroup(wordProperty) + " object:" + getObject(wordProperty));
-			
+//			showSentenceComponent();
+//			
 //			Tree tree = sentence.get(TreeAnnotation.class);
 			
 //			SemanticGraph dependencies = sentence.get(CollapsedCCProcessedDependenciesAnnotation.class);
@@ -145,10 +144,29 @@ public class TestCoreNLP {
 		
 	}
 	
+	public List<WordProperty> insertSpecialWord(List<WordProperty> wpList)
+	{
+		int num = wpList.size();
+		WordProperty wp;
+		for(int i = 0; i<num; i++)
+		{
+			wp = wpList.get(i);
+			if(wp.getProperty().equals("EX"))
+			{
+				if(wp.getProperty().equals("NN"))
+				{
+					WordProperty tempWp = new WordProperty("that","EX",true);
+					wpList.add(i, tempWp);
+				}
+			}
+		}
+		return wpList;
+	}
 	public List<List<WordProperty>> splitClause(List<WordProperty> wpList)
 	{
 		List<List<WordProperty>> splitList = new ArrayList<List<WordProperty>>();
 		List<WordProperty> tempList;
+		wpList = insertSpecialWord(wpList);
 		int num = wpList.size();
 		WordProperty wp,ccWp = null;
 		tempList = new ArrayList<WordProperty>();
@@ -489,7 +507,8 @@ public class TestCoreNLP {
 		         if(iS&&(wp.getProperty().equals("VV")||wp.getProperty().equals("VBD")
 		            		||wp.getProperty().equals("VBN")||wp.getProperty().equals("VBP")
 		            		||wp.getProperty().equals("VBZ")||wp.getProperty().equals("VB"))
-		            		||wp.getProperty().equals("VE")||wp.getProperty().equals("VC"))
+		            		||wp.getProperty().equals("VE")||wp.getProperty().equals("VC")
+		            		||(wp.getProperty().equals("VBG")&&i == 0))
 		         {
 		        	 int  tempIndex  = verbPhrase(i,wpList);
 		        	
@@ -632,7 +651,7 @@ public class TestCoreNLP {
 			pointer ++;
 			if(wp.getProperty().equals("TO"))
 				return i;
-			if(pointer >= 5)
+			if(pointer >= 3)
 				return index;
 				
 		}

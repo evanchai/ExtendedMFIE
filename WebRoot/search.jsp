@@ -192,8 +192,8 @@ var projectName = "";
 			projectName = '${map.projectName}';			
 			
 	    	$("#focusFacet").ligerTree({ data: ${map.focusFacet}, onCheck:filterSelected});			
-			$("#environmentFacet").ligerTree({ data: ${map.environmentFacet},onCheck: filterSelected});
-			$("#languageFacet").ligerTree({ data: ${map.environmentFacet},onCheck: filterSelected});
+			$("#systemFacet").ligerTree({ data: ${map.systemFacet},onCheck: filterSelected});
+			$("#languageFacet").ligerTree({ data: ${map.languageFacet},onCheck: filterSelected});
 			$("#tagFacet").ligerTree({ data: ${map.packageTree},onCheck: filterSelected});			
 			$("#contentFacet").ligerTree({ data: ${map.typeTree},onCheck: filterSelected});			
 		
@@ -204,7 +204,7 @@ var projectName = "";
 			managerType.collapseAll();	
 			managerTopic = $("#focusFacet").ligerGetTreeManager();//对树进行管理的API
 			managerTopic.collapseAll();
-			managerTopicCall = $("#environmentFacet").ligerGetTreeManager();
+			managerTopicCall = $("#systemFacet").ligerGetTreeManager();
 			managerTopicCall.collapseAll();
 			managerlanauageTree = $("#languageFacet").ligerGetTreeManager();
 			managerlanauageTree.collapseAll();
@@ -568,7 +568,7 @@ var projectName = "";
 
 						<div id="tabs-SystemEnviroment">
 							<div class="treeview">
-								<div id="environmentFacet"></div>
+								<div id="systemFacet"></div>
 							</div>
 							<input type="hidden" name="action" value="submit" /> <input
 								type="hidden" id="topicCallTree1" name="topicCallTree1" />

@@ -531,20 +531,23 @@ public class StackOverflowTree
 		HashMap<String,List<Post>> facetPost = new HashMap<String,List<Post>>();
 		for(Post post:postList)
 		{
-			String focus = post.getFocus();
-			if(focus == null)
+			String focusSet = post.getFocus();
+			if(focusSet == null)
 				continue;
-			int index = focus.indexOf("-");
-
-			if(index!=-1)
-				focus = focus.substring(index+1,focus.length());
-			if(facetPost.containsKey(focus))
-				facetPost.get(focus).add(post);
-			else
+			String[] focus = focusSet.split(",");
+			for(String foc:focus)
 			{
-				List<Post> list = new ArrayList<Post>();
-				list.add(post);
-				facetPost.put(focus, list);
+				int index = foc.lastIndexOf("-");
+				if(index!=-1)
+					foc = foc.substring(index+1,foc.length());
+				if(facetPost.containsKey(foc))
+					facetPost.get(foc).add(post);
+				else
+				{
+					List<Post> list = new ArrayList<Post>();
+					list.add(post);
+					facetPost.put(foc, list);
+				}
 			}
 		}
 	
@@ -588,27 +591,98 @@ public class StackOverflowTree
 		System.out.println("jqtok2");
 		return sb.toString();
 	}
-	
-	private String getEnvironmentJSONString(List<Post> postList)
+	private String getSystemJSONString(List<Post> postList)
 	{
 		StringBuilder sb = new StringBuilder();
 		HashMap<String,List<Post>> facetPost = new HashMap<String,List<Post>>();
 		for(Post post:postList)
 		{
-			String focus = post.getEnvironment();
-			if(focus == null)
+			String systemSet = post.getSystem();
+			if(systemSet == null)
 				continue;
-			int index = focus.lastIndexOf("-");
-			if(index!=-1)
-				focus = focus.substring(index+1,focus.length());
-			if(facetPost.containsKey(focus))
-				facetPost.get(focus).add(post);
-			else
+			String[] system = systemSet.split(",");
+			for(String sys:system)
 			{
-				List<Post> list = new ArrayList<Post>();
-				list.add(post);
-				facetPost.put(focus, list);
+				int index = sys.lastIndexOf("-");
+				if(index!=-1)
+					sys = sys.substring(index+1,sys.length());
+				if(facetPost.containsKey(sys))
+					facetPost.get(sys).add(post);
+				else
+				{
+					List<Post> list = new ArrayList<Post>();
+					list.add(post);
+					facetPost.put(sys, list);
+				}
 			}
+			
+		}
+	
+		Iterator iter = facetPost.keySet().iterator();
+		sb.append("[");
+		int size = facetPost.size();
+		int id = 0;
+		String key = "";
+		List<Post> list = null;
+		while (iter.hasNext())
+		{
+			
+		    key = (String)iter.next();
+			list = facetPost.get(key);
+	
+			sb.append("{");
+			sb.append("text: " + quote);
+			
+			sb.append(key+"("+list.size()+")");
+			sb.append(quote);
+			sb.append(", children: [");
+			for(Post post:list)
+			{
+				sb.append("{text: " + quote);
+				sb.append(post.post_title.replace("{", "")
+						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&", ""));
+				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
+				sb.append("&"+post.postId +"&");
+				sb.append("</span>");
+				sb.append(quote + "}");
+				sb.append(", ");
+			}
+			sb.delete(sb.length() - 2, sb.length());
+			sb.append("]"); // end children
+			sb.append("}"); // end of current node
+			sb.append(", ");
+		}
+		if (sb.length() > 3)
+			sb.delete(sb.length() - 2, sb.length());
+		sb.append("]");
+		return sb.toString();
+	}
+	
+	private String getLangaugeJSONString(List<Post> postList)
+	{
+		StringBuilder sb = new StringBuilder();
+		HashMap<String,List<Post>> facetPost = new HashMap<String,List<Post>>();
+		for(Post post:postList)
+		{
+			String languageSet = post.getLanguage();
+			if(languageSet == null)
+				continue;
+			String[] language = languageSet.split(",");
+			for(String lan:language)
+			{
+				int index = lan.lastIndexOf("-");
+				if(index!=-1)
+					lan = lan.substring(index+1,lan.length());
+				if(facetPost.containsKey(lan))
+					facetPost.get(lan).add(post);
+				else
+				{
+					List<Post> list = new ArrayList<Post>();
+					list.add(post);
+					facetPost.put(lan, list);
+				}
+			}
+			
 		}
 	
 		Iterator iter = facetPost.keySet().iterator();
@@ -779,9 +853,14 @@ public class StackOverflowTree
 //		return getFocusJSONString(postList);
 //	}
 
-	public String getEnvironmentJSONString()
+	public String getLanguageJSONString()
 	{
-		return getEnvironmentJSONString(postList);
+		return getLangaugeJSONString(postList);
+	}
+	
+	public String getSystemJSONString()
+	{
+		return getSystemJSONString(postList);
 	}
 	
 	public String getFocusJSONString()

@@ -9,7 +9,8 @@ import org.jsoup.Jsoup;
 public class Post  implements Serializable{
 	//common attributes
 	private String focus;
-	private String environment;
+	private String system;
+	private String language;
 	
 	public int postId;
 
@@ -34,7 +35,7 @@ public class Post  implements Serializable{
 	public Answer accpted_answer;
 	
 	public Post(int postId,String post_title,String post_body,String post_tag,int post_comment_count,
-			int parentId,int post_answer_count,int accepted_answerId,String focus,String environment)
+			int parentId,int post_answer_count,int accepted_answerId,String focus,String system,String language)
 	{
 		this.postId = postId;
 		this.post_title=post_title;
@@ -45,7 +46,8 @@ public class Post  implements Serializable{
 		this.post_answer_count= post_answer_count;
 		this.accepted_answerId= accepted_answerId;
 		this.focus = focus;
-		this.environment = environment;
+		this.system = system;
+		this.language = language;
 
 		splitBody(post_body);
 		commentList= null;
@@ -191,14 +193,23 @@ public class Post  implements Serializable{
 	{
 		return this.focus;
 	}
-	public void setEnvironment(String focus)
+	public void setSystem(String system)
 	{
-		this.environment = environment;
+		this.system = system;
 	}
 	
-	public String getEnvironment()
+	public String getSystem()
 	{
-		return this.environment;
+		return this.system;
+	}
+	public void setLanguage(String language)
+	{
+		this.language = language;
+	}
+	
+	public String getLanguage()
+	{
+		return this.language;
 	}
 
 }

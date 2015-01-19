@@ -73,7 +73,8 @@ public abstract class Facet {
 	        
 	      for(Map.Entry<Post, Grade> map:list_Data)
 	      {
-	    	  System.out.println(map.getValue().getGrade()+"|"+map.getKey().post_title);
+//	    	  System.out.println(map.getValue().getGrade()+"|"+map.getKey().post_title);
+	    	  System.out.println(map.getKey().post_title);
 	      }
 	    }
 	  

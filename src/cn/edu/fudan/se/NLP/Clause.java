@@ -42,7 +42,7 @@ public class Clause {
 	{
 		if(Expression.getInstance().Authority(clause))
 		{
-			authority = "Deny";
+			authority = Global.deny;
 		}
 		List<WordProperty> wpList = predicate.getPredicateList();
 		Negative n = new Negative();
@@ -52,7 +52,7 @@ public class Clause {
 			{
 				if(n.Authority(wp.getLemmaWord()))
 				{
-					authority = "deny";
+					authority = Global.deny;
 				}
 			}
 

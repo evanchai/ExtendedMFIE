@@ -11,9 +11,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 
-import cn.edu.fudan.se.environment.Environment;
-
-import cn.edu.fudan.se.focuse.Focus;
 
 
 public class InitFacetItem {
@@ -77,9 +74,9 @@ private List<Facet> itemList = new ArrayList<Facet>();
 	            		 for(Element ele1:element)
 	            		 {
 	            			 if(fac.getName().equalsIgnoreCase("Environment"))
-	            			     facetInstance = new Environment("Environment-"+ele1.getName(),ele1.elementText("Item"));
+	            			     facetInstance = new ClassifyPost(ele1.getName(),ele1.elementText("Item"));
 	            			 else if(fac.getName().equalsIgnoreCase("Focus"))
-	            				 facetInstance = new Focus("Focus",ele1.elementText("Item"));
+	            				 facetInstance = new ClassifyPost("Focus",ele1.elementText("Item"));
 	            			
 //	            			Element model = ele1.element("Model");
 	            			
@@ -93,7 +90,8 @@ private List<Facet> itemList = new ArrayList<Facet>();
 	            							,model.elementText("PropertyS"),
 	            							model.elementText("PropertyP"),model.elementText("PropertyO"),
 	            							model.elementText("DomainVerb"),model.elementText("Code"),
-	            							model.elementText("Effect")));
+	            							model.elementText("Effect"),model.elementText("Question"),model.elementText("Tense"),
+	            							model.elementText("State")));
 	            				}
 	            			}
 	            			

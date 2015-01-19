@@ -251,8 +251,10 @@ public class GetStackOverflowDataService
 
 		JSONArray focusTree = JSONArray.fromObject(tree.getFocusJSONString());
 		map.put("focusFacet", focusTree);
-		JSONArray environmentFacet = JSONArray.fromObject(tree.getEnvironmentJSONString());
-		map.put("environmentFacet", environmentFacet);
+		JSONArray systemFacet = JSONArray.fromObject(tree.getSystemJSONString());
+		map.put("systemFacet", systemFacet);
+		JSONArray languageFacet = JSONArray.fromObject(tree.getLanguageJSONString());
+		map.put("languageFacet", languageFacet);
 //		JSONArray topicCalledByTree = JSONArray.fromObject(tree.getTopicCalledByJSONString());
 //		map.put("topicCalledByTree", topicCalledByTree);
     	JSONArray packageTree = JSONArray.fromObject(tree.getTagJSONString());
