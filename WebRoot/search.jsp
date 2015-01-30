@@ -166,6 +166,7 @@ var managerVHistory,managerPackage,managerType,managerCalledBy,managerCall,manag
 var managerlanauageTree,treeSelectedNums;
 var currentFacetButton;
 var allSelectedItems,treeSelectedHashTable;
+var ids,postCount;
 var projectName = ""; 
 		$(function() {
      	$("#txt3").ligerComboBox({
@@ -190,13 +191,14 @@ var projectName = "";
                 }
             });  		
 			
-			projectName = '${map.projectName}';			
+			projectName = '${map.projectName}';	
+			postCount = '${map.elementCount}';			
 			
 	    	$("#focusFacet").ligerTree({ data: ${map.focusFacet}, onCheck:filterSelected});			
 			$("#systemFacet").ligerTree({ data: ${map.systemFacet},onCheck: filterSelected});
 			$("#languageFacet").ligerTree({ data: ${map.languageFacet},onCheck: filterSelected});
-			$("#tagFacet").ligerTree({ data: ${map.packageTree},onCheck: filterSelected});			
-			$("#contentFacet").ligerTree({ data: ${map.typeTree},onCheck: filterSelected});			
+			$("#tagFacet").ligerTree({ data: ${map.typeTree},onCheck: filterSelected});			
+			$("#contentFacet").ligerTree({ data: ${map.packageTree},onCheck: filterSelected});			
 		
 	
 			managerPackage = $("#tagFacet").ligerGetTreeManager();
@@ -301,9 +303,10 @@ var projectName = "";
 		
 		function showStackoverflowPage(id)
 		{
-			document.forms.form1.target= "_blank";
+			/* document.forms.form1.target= "_blank";
 			document.forms.form1.action="http://stackoverflow.com/questions/" + id;
-			document.forms.form1.submit();
+			document.forms.form1.submit(); */
+			window.open("http://stackoverflow.com/questions/" + id);
 		}
 
 		function performExperiment()
@@ -442,11 +445,12 @@ var projectName = "";
 		}
 		function filterSelected()
 		{
-
+			var resultNum;
 			getVal();
+			
 			$("#result > ol > div").hide(); //hide all candidates
 			
-			var ids = new Array();
+		    ids = new Array();
 			for(var facet in treeSelectedHashTable){
 			    //convert selected String to Array
 				var facetIds = SelectedIds(treeSelectedHashTable[facet]);
@@ -458,11 +462,19 @@ var projectName = "";
 			 
 			//var ids= SelectedIds(allSelectedItems);
 		    if(isMultitreeSelected()) 
-		    	ids=getArray(ids,treeSelectedNums); 
-		    for(var i = 0; i< ids.length;i++)
+		    	ids=getArray(ids,treeSelectedNums);
+			if(treeSelectedNums==0){
+				$("#result > ol > div").show();
+				resultNum=postCount;
+			}
+			else{
+				resultNum=ids.length;
+			 for(var i = 0; i< ids.length;i++)
 		   	{
 		   		$("#" + ids[i]).show();
 		   	}
+				
+			}
 
 			/*
 
@@ -480,7 +492,7 @@ var projectName = "";
 					
 				};			
 			}*/
-		    $("#resultCount").html(ids.length + " results");
+		    $("#resultCount").html(resultNum + " results");
 		}
 
 		var nothing = "-1";
@@ -518,14 +530,14 @@ var projectName = "";
 					src="images/logo.png" /> </a>
 			</div>
 			<div class="search">
-				<form id="form1" method="post">
+				<form id="form1" method="post" action="search">
 					<div class="header_input">
 
 					 <input name="q" type="text" class="header_input_txt"
 							id="txtKeywords" value="${q }" size="30" maxlength="50" />
 						<button id="search" class="search_btn"
 							onmouseout="this.className='search_btn'"
-							onmouseover="this.className='search_btn search_btn_hover'" />
+							onmouseover="this.className='search_btn search_btn_hover'"/>
 						<span class="search_png">Search</span>
 
 					<!-- 	<button id="searchInResult" class="search_btn"
@@ -614,9 +626,9 @@ var projectName = "";
 <!-- Tag and Content Facets -->
 					<div id="tabs-content" style="width: 360px;">
 						<ul>
-							<li><a href="#tab-package">Tag</a>
+							<li><a href="#tab-package">Content</a>
 							</li>
-							<li><a href="#tab-type">Content</a>
+							<li><a href="#tab-type">Tag</a>
 							</li>
 						</ul>
 
@@ -638,6 +650,15 @@ var projectName = "";
 							</div>
 						</div>
 					</div>
+				  <div class="con">
+						<button id="btnType" style="margin-left:140px" class="search_btn"
+							onmouseout="this.className='search_btn'"
+							onmouseover="this.className='search_btn search_btn_hover'"
+							onclick="doUpdate()" />
+			            <span class="search_png">Update</span> <input type="hidden"
+							name="action" value="submit" /> 
+						
+				 </div> 
 
 
 <!--added by Luminosite 14/5/4 -->
@@ -697,11 +718,9 @@ var projectName = "";
 					<div id="resultCount"
 						style="margin-left: 10px; color: #999;font-size: 13px;text-overflow: ellipsis;">
 						${map.elementCount} results</div>
-
 					<div id="result" style="height: 700px;  overflow-y:auto;">
 
 						<br />
-
 						<ol>
 							<c:forEach var="list" items="${map.data}" varStatus="status">
 <%-- 								<li class="g" id='${list.postId}'>--%>
@@ -724,7 +743,6 @@ var projectName = "";
 								<!-- </li> -->
 							</c:forEach>
 						</ol>
-
 					</div>
 <!-- 					<form id="form3" method="post">
 					
