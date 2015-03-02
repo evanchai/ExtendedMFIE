@@ -1,6 +1,7 @@
 package cn.edu.fudan.se.web.action;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -229,48 +230,83 @@ public class StackOverflowSearchServlet extends HttpServlet
 		{
 			
 			FLParameter flParameter = new FLParameter();
-			String topics = request.getParameter("topicTree1");
-			String topicCall = request.getParameter("topicCallTree1");
-			String topicCalledBy = request.getParameter("topicCalledByTree1");
-			String valueOfPackageTree = request.getParameter("valueOfPackageTree");
-			String valueOfTypeTree = request.getParameter("valueOfTypeTree");
-			String callBy = request.getParameter("valueOfCalledBy");
-			String call = request.getParameter("valueOfCall");
-			String access = request.getParameter("valueOfAccess");
-			String vHistory = request.getParameter("valueOfVHistory");
-			
-			System.out.println("VH:"+vHistory);
-			System.out.println("DD:"+topics);
+			String focusFacet = request.getParameter("topicTree1");
+			String systemFacet = request.getParameter("topicCallTree1");
+			String languageFacet = request.getParameter("valueOfLanguageTree");
+			String tagFacet = request.getParameter("valueOfPackageTree");
+			String contentFacet = request.getParameter("valueOfTypeTree");
+			int num = 0;
+			if(!"".equals(focusFacet))
+				num++;
+			if(!"".equals(systemFacet))
+				num++;
+			if(!"".equals(languageFacet))
+				num++;
+			if(!"".equals(tagFacet))
+				num++;
+			if(!"".equals(contentFacet))
+				num++;
+//			String callBy = request.getParameter("valueOfCalledBy");
+//			String call = request.getParameter("valueOfCall");
+//			String access = request.getParameter("valueOfAccess");
+//			String vHistory = request.getParameter("valueOfVHistory");
+//			
+         
+			String ids = request.getParameter("ids");
+			System.out.println(ids);
 
-			flParameter.setTopic(topics);
-			flParameter.setTopicCall(topicCall);
-			flParameter.setTopicCalledBy(topicCalledBy);
+			flParameter.setTopic(focusFacet);
+			flParameter.setTopicCall(systemFacet);
+			flParameter.setTopicCalledBy(languageFacet);
 			
-			flParameter.setPackageTree(valueOfPackageTree);
-			flParameter.setTypeTree(valueOfTypeTree);
-			flParameter.setCallby(callBy);
-			flParameter.setCall(call);
-			flParameter.setAccess(access);
-			flParameter.setvHistory(vHistory);
+			flParameter.setPackageTree(tagFacet);
+			flParameter.setTypeTree(contentFacet);
+//			flParameter.setCallby(callBy);
+//			flParameter.setCall(call);
+//			flParameter.setAccess(access);
+//			flParameter.setvHistory(vHistory);
 			Map<String, Object> map = null;
 
-			map = data.getIncrementalData(flParameter);
+			map = data.getIncrementalData(flParameter,num);
 
-			
-			map.put("projectName", request.getSession().getAttribute("project"));
+			Iterator iter = map.keySet().iterator();
+			while(iter.hasNext())
+			{
+				Object key = iter.next();
+				Object val = map.get(key);
+				System.out.println("Key:"+key.toString());
+				System.out.println(val.toString());
+			}
+//			map.put("projectName", request.getSession().getAttribute("project"));
 			request.setAttribute("map", map);
 			request.setAttribute("q", request.getSession().getAttribute("keywords"));
 			
 			HistoryNode historyNode = new HistoryNode();			
 			historyNode.setNumberOfElement(Integer.parseInt(map.get("elementCount").toString()));	
 			historyNode.setData(map);
-			historyNode.setParamater(flParameter.getParameterString());
-			historyNode.setType(HistoryNode.getTypeByParameter(flParameter));
+//			historyNode.setParamater(flParameter.getParameterString());
+			historyNode.setParamater("");
+//			historyNode.setType(HistoryNode.getTypeByParameter(flParameter));
+			historyNode.setType(HistoryNode.TYPE_SEARCH);
 			historyTree.addNode(historyNode);
 			request.getSession().setAttribute("HistoryTree", historyTree);
 			map.put("HistoryTree", historyTree.toString());
 			
 			request.getRequestDispatcher("/search.jsp").forward(request, response);
+			
+//			HistoryNode historyNode = new HistoryNode();
+//			historyNode.setKeywords(str);				
+//			historyNode.setParamater(str);
+//			historyNode.setNumberOfElement(Integer.parseInt(map.get("elementCount").toString()));
+//			historyNode.setData(map);
+//			historyNode.setProjectName(project);
+//			historyNode.setType(HistoryNode.TYPE_SEARCH);
+//			historyTree.setCurrentNode(null);
+//			System.out.println("ok1");
+//			historyTree.addNode(historyNode);
+//			request.getSession().setAttribute("HistoryTree", historyTree);
+//			System.out.println("ok2");
+//			map.put("HistoryTree", historyTree.toString());
 			
 		}
 

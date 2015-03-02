@@ -38,6 +38,8 @@ public class GetStackOverflowDataService
 
 	public static final int TEST = 0x0;
 	public static final int INIT_PROJECT_LIST = 0x1;
+	List<Cluster> clusterByContentList = null;
+	List<Cluster> clusterByTagList = null;
 
 	HttpSession session;
 	ProjectService projectService;
@@ -90,8 +92,7 @@ public class GetStackOverflowDataService
 //		List<Element> elementList = null;
 //		SearchResultService  srs = new SearchResultService();
 //		List<Facet> facetItemList = null;
-		List<Cluster> clusterByContentList = null;
-		List<Cluster> clusterByTagList = null;
+
 //		if(ec.EXT_FLAG == ExtConstant.EXT_MFIE)
 //		{
 //			srs.searchStackOverflow(keywords);
@@ -114,7 +115,8 @@ public class GetStackOverflowDataService
 		
 		PostDAOImpl pdi = new PostDAOImpl();
 		FilterStopWord fsw = new FilterStopWord();
-		postList = pdi.findPosts(fsw.getStringWithoutStopWord(keywords));
+	    postList = pdi.findPosts(fsw.getStringWithoutStopWord(keywords));
+//		postList = pdi.findSqlitePosts(fsw.getStringWithoutStopWord(keywords));
 		
 		
 //       postList = CreateData.getData();
@@ -281,17 +283,19 @@ public class GetStackOverflowDataService
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getIncrementalData(FLParameter flParameter)
+	public Map<String, Object> getIncrementalData(FLParameter flParameter,int treeNum)
 	{
 		Map<String, Object> map = (Map<String, Object>) session.getAttribute("map");
-//		if (flParameter.isEmpty())
-//			return map;
-//		List<Element> elementList = (List<Element>) map.get("data");
+		if (flParameter.isEmpty())
+			return map;
+		List<Post> postList = (List<Post>) map.get("data");
+		List<String> selectId = filter(flParameter,treeNum);
 //		System.out.println("At first: Length of element list is " + elementList.size());
-//		elementList = processFilter(flParameter, elementList);
-//		
+		postList = processFilter(selectId, postList);
+		
+		
 //		List<Method> methodList = null;
-//		
+		
 //		ExtConstant ec = ExtConstant.getInstance();
 //		if(ec.EXT_FLAG==ExtConstant.ORI_MFIE){
 //			methodList = projectService.getMethodListByElementList(elementList);
@@ -299,24 +303,106 @@ public class GetStackOverflowDataService
 //		else if(ec.EXT_FLAG==ExtConstant.EXT_MFIE){
 //			methodList = projectService.getMethodListByElementListLucene(elementList);
 //		}
-//		
-//		return createDataToDisplay(elementList, methodList, elementList.get(0).getProjectName());
-		return null;
+		clusterByContentList = getClusterByContent(postList);
+		clusterByTagList = getClusterByTag(postList);
+		return createDataToDisplay(postList, clusterByContentList, clusterByTagList);
 	}
 	
-	private List<Element> processFilter(FLParameter flParameter, List<Element> elementList)
+	public List<String> filter(FLParameter flParameter,int treeNum)
 	{
-		List<Element> newElements = new ArrayList<Element>();
-		List<String> selectedElementIDs = flParameter.getIDs();
-		for(Element element : elementList)
+		List<String> ids = new ArrayList<String>();
+
+
+		List<String> facetString = new ArrayList<String>();
+		facetString .add(flParameter.getTopic());
+		facetString .add(flParameter.getTopicCall());
+		facetString .add(flParameter.getTopicCalledBy());
+		facetString .add(flParameter.getPackageTree());
+		facetString .add(flParameter.getTypeTree());
+		for(String facet:facetString)
 		{
-			if(selectedElementIDs.contains(element.getId()))
+			List<String> facetIds = SelectedIds(facet);
+			//make array deduplicated
+			facetIds = deduplicated(facetIds);
+			//concat all arrays
+			ids.addAll(facetIds);
+		}
+
+		 
+		//var ids= SelectedIds(allSelectedItems);
+	    if(treeNum>1) 
+	    	ids=getArray(ids,treeNum); 
+	    return ids;
+	}
+	
+	private List<Post> processFilter(List<String> selectId, List<Post> postList)
+	{
+		List<Post> newPostList = new ArrayList<Post>();
+		for(Post post : postList)
+		{
+			if(selectId.contains(post.postId+""))
 			{
-				newElements.add(element);
+				newPostList.add(post);
 			}
 		}
-		return newElements;
+		return newPostList;
 	}
+	
+	public List<String> SelectedIds(String titleString)
+	{
+		List<String> ids = new ArrayList<String>();
+		int index1 = titleString.indexOf("&");
+		int num = 0;
+		
+	    while(index1!=-1)
+	    {
+	    	num++;
+	    	titleString = titleString.substring(index1+1, titleString.length());
+	    	//alert(allSelectedItems);
+	    	int index2 = titleString.indexOf("&");
+	    	String id = titleString.substring(0, index2);
+	    	ids.add(id);
+	    	titleString = titleString.substring(index2+1, titleString.length());
+	    	index1 = titleString.indexOf("&");
+	    };
+	    return ids;
+	}
+	
+	public List<String> deduplicated(List<String> a) {		
+	    HashMap<String,Boolean> hash = new HashMap<String,Boolean>();
+    	int len = a.size();
+    	List<String> result = new ArrayList<String>();
+
+		 for (int i = 0; i < len; i++){
+			 String key = a.get(i);
+		     if (hash.get(key)==null){
+		         hash.put(key, true);
+		         result.add(key);
+		     } 
+		 }		
+		 return result;
+	}
+	public List<String> getArray(List<String> a,int treeNum) {
+	    HashMap<String,Integer> hash = new HashMap<String,Integer>();
+	 	int len = a.size();
+    	List<String> result = new ArrayList<String>();
+		
+		 for (int i = 0; i < len; i++){
+			 String key = a.get(i);
+		     if (hash.get(key)==null){
+		    	 hash.put(key, 1);
+		     }
+		     else if(hash.get(key)>=1){
+		    	 int value = hash.get(key);
+		    	 value ++;
+		     	hash.put(key, value);
+		     	if(value>=treeNum) 
+		     		result.add(key);
+
+		     }
+		 }
+		 return result;
+		}
 
 
 

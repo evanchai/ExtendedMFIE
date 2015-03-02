@@ -578,8 +578,7 @@ public class StackOverflowTree
 			{
 				sb.append("{text: " + quote);
 //				System.out.println(post.post_title);
-				sb.append(post.post_title.replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&","").replace(",",""));
+				sb.append(processSpecialChar(post.post_title));
 				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 				sb.append("&"+post.postId +"&");
 				sb.append("</span>");
@@ -595,7 +594,6 @@ public class StackOverflowTree
 			sb.delete(sb.length() - 2, sb.length());
 		sb.append("]");
 		System.out.println("jqtok2");
-		System.out.println(sb.toString());
 		return sb.toString();
 	}
 	private String getSystemJSONString(List<Post> postList)
@@ -643,11 +641,14 @@ public class StackOverflowTree
 			sb.append(key+"("+list.size()+")");
 			sb.append(quote);
 			sb.append(", children: [");
+
+
 			for(Post post:list)
 			{
+
 				sb.append("{text: " + quote);
-				sb.append(post.post_title.replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&", "").replace(",",""));
+				
+				sb.append(processSpecialChar(post.post_title));
 				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 				sb.append("&"+post.postId +"&");
 				sb.append("</span>");
@@ -713,8 +714,7 @@ public class StackOverflowTree
 			for(Post post:list)
 			{
 				sb.append("{text: " + quote);
-				sb.append(post.post_title.replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&", "").replace(",",""));
+				sb.append(processSpecialChar(post.post_title));
 				sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 				sb.append("&"+post.postId +"&");
 				sb.append("</span>");
@@ -742,9 +742,8 @@ public class StackOverflowTree
 				sb.append("{");
 				sb.append("text: " + quote);
 				List<Document> documentList = cluster.getDocuments();
-				String label = cluster.getLabel().replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&","").replace(",","");
-				sb.append(label+"("+documentList.size()+")");
+				
+				sb.append(processSpecialChar(cluster.getLabel())+"("+documentList.size()+")");
 
 				sb.append(quote);
 				sb.append(", children: [");
@@ -754,8 +753,7 @@ public class StackOverflowTree
 				{
 					Post post = document.getField("post");
 					sb.append("{text: " + quote);
-					sb.append(post.post_title.replace("{", "")
-							.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&","").replace(",",""));
+					sb.append(processSpecialChar(post.post_title));
 					sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 					sb.append("&"+post.postId +"&");
 					sb.append("</span>");
@@ -784,9 +782,7 @@ public class StackOverflowTree
 				sb.append("{");
 				sb.append("text: " + quote);
 				List<Document> documentList = cluster.getDocuments();
-				String label = cluster.getLabel().replace("{", "")
-						.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&","").replace(",","");
-				sb.append(label+"("+documentList.size()+")");
+				sb.append(processSpecialChar(cluster.getLabel())+"("+documentList.size()+")");
 				sb.append(quote);
 				sb.append(", children: [");
 			
@@ -795,8 +791,7 @@ public class StackOverflowTree
 				{
 					Post post = document.getField("post");
 					sb.append("{text: " + quote);
-					sb.append(post.post_title.replace("{", "")
-							.replace("}", "").replace("[", "").replace("]", "").replace("'", "").replace("&","").replace(",",""));
+					sb.append(processSpecialChar(post.post_title));
 					sb.append("<span style=\"" + CSS_OF_ID + "\"> ");
 					sb.append("&"+post.postId +"&");
 					sb.append("</span>");
@@ -1022,6 +1017,19 @@ public class StackOverflowTree
 	{
 		this.totalClassList = classList;
 
+	}
+	
+	public String processSpecialChar(String string)
+	{
+		return string.replace("{", "")
+				.replace("}", "")
+				.replace("[", "")
+				.replace("]", "")
+				.replace("'", "")
+				.replace("&","")
+				.replace(",","")
+				.replace("<", "")
+				.replace(">", "");
 	}
 
 	public void setPostList(List<Post> postList,List<Cluster> clusterByContentList,List<Cluster> clusterByTagList)

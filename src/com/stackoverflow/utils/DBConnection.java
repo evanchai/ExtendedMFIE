@@ -6,6 +6,23 @@ public class DBConnection {
 	private static final String DBUrl="jdbc:mysql://10.131.252.160:3306/stackoverflowdata";
 	private static final String DBUser="root";
 	private static final String DBPassword="1234";
+	
+	public static Connection getConnectio()
+	{
+		Connection connection =null;
+		try {
+				Class.forName("org.sqlite.JDBC");
+
+				 connection=DriverManager.getConnection("jdbc:sqlite://C:/Users/jqt/Desktop/mydb/mydb.db");
+//				connection=DriverManager.getConnection("jdbc:sqlite://E:/ChangeMine/Revision.db");
+	    		
+			}
+    	catch (Exception e) {
+    		e.printStackTrace();
+			// TODO: handle exception
+		}
+		return connection; 
+	}
 	public static Connection getConnection() throws Exception
 	{
 		Connection conn=null;

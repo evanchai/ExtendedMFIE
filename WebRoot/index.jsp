@@ -31,7 +31,7 @@
 				<button id="search" class="search_btn" aria-label="Search"
 					onmouseout="this.className='search_btn'"
 					onmouseover="this.className='search_btn search_btn_hover'" />
-				<span class="search_png">Search</span>
+				<span class="search_png">搜索</span>
 			</div>
 		</form>
 	</div>

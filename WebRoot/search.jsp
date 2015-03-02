@@ -538,7 +538,7 @@ var projectName = "";
 						<button id="search" class="search_btn"
 							onmouseout="this.className='search_btn'"
 							onmouseover="this.className='search_btn search_btn_hover'"/>
-						<span class="search_png">Search</span>
+						<span class="search_png">搜索</span>
 
 					<!-- 	<button id="searchInResult" class="search_btn"
 							onmouseout="this.className='search_btn'"
@@ -556,7 +556,7 @@ var projectName = "";
 			onsubmit="return getVal();">
 			<div class="maincolmask maincol">
 				<div class="col1">
-					<table class="facet-title" align="center" cellspacing="2px">
+			<!-- 		<table class="facet-title" align="center" cellspacing="2px">
 						<tr>
 							<td class="facet-title" colspan="2">History Explorer</td>
 
@@ -573,7 +573,7 @@ var projectName = "";
 								class="search_png">Navigate</span>
 							</td>
 						</tr>
-					</table>
+					</table> -->
 					<!-- <div class="facet-title">
 						Exploration History  <input type="text" id="txt3" style="z-index:2;" />
 						<button id="btnHistory" class="search_btn"
@@ -587,7 +587,7 @@ var projectName = "";
 					
 					<div id="tabTopic" style="width: 360px; ">
 						<ul>
-							<li><a href="#tabs-selfTopic">Focus</a>
+							<li><a href="#tabs-selfTopic">问题关注点</a>
 							</li>
 						</ul>
 						<div id="tabs-selfTopic">
@@ -602,9 +602,9 @@ var projectName = "";
 <!-- Enviroment Facets -->
 					<div id="tabEnviroment" style="width: 360px;">
 						<ul>
-							<li><a href="#tabs-SystemEnviroment">System</a>
+							<li><a href="#tabs-SystemEnviroment">系统环境</a>
 							</li>
-							<li><a href="#tabs-LanguageEnviroment">Language</a>
+							<li><a href="#tabs-LanguageEnviroment">语言环境</a>
 							</li>
 						</ul>
 
@@ -626,9 +626,9 @@ var projectName = "";
 <!-- Tag and Content Facets -->
 					<div id="tabs-content" style="width: 360px;">
 						<ul>
-							<li><a href="#tab-package">Content</a>
+							<li><a href="#tab-package">问题内容</a>
 							</li>
-							<li><a href="#tab-type">Tag</a>
+							<li><a href="#tab-type">问题标签</a>
 							</li>
 						</ul>
 
@@ -655,7 +655,7 @@ var projectName = "";
 							onmouseout="this.className='search_btn'"
 							onmouseover="this.className='search_btn search_btn_hover'"
 							onclick="doUpdate()" />
-			            <span class="search_png">Update</span> <input type="hidden"
+			            <span class="search_png">更新</span> <input type="hidden"
 							name="action" value="submit" /> 
 						
 				 </div> 
