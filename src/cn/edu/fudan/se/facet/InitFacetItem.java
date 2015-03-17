@@ -17,43 +17,6 @@ public class InitFacetItem {
 	
 private List<Facet> itemList = new ArrayList<Facet>();
 	
-//	public InitFacetItem()
-//	{
-//		itemList.add(new Linux());
-//		itemList.add(new Android());
-//		itemList.add(new OSX());
-//		itemList.add(new Windows());
-////		envirList.add(new IOS());
-//
-//		itemList.add(new Cc());
-//		itemList.add(new Cx());
-//		itemList.add(new Cy());
-//		itemList.add(new Java());
-//		itemList.add(new JSP());
-//		itemList.add(new NET());
-//		itemList.add(new PHP());
-//		itemList.add(new Python());
-//
-//		itemList.add(new MySQL());
-//		itemList.add(new SQL());
-//		itemList.add(new SQLite());
-//		itemList.add(new Oracle());
-//		
-//		itemList.add(new FreeLanguage());
-//		itemList.add(new FreeSystem());
-//		itemList.add(new FreeDatabase());
-//		
-//		itemList.add(new API());
-//		itemList.add(new Connection());
-//		itemList.add(new Exception());
-//		itemList.add(new QueryFocus());
-//		itemList.add(new KeyFocuse());
-//		itemList.add(new ColumnFocuse());
-//		itemList.add(new TableFocus());
-//		itemList.add(new Configure());
-//	
-//	}
-	
 	
 	public InitFacetItem()
 	{
@@ -73,11 +36,14 @@ private List<Facet> itemList = new ArrayList<Facet>();
 	            		 List<Element> element = fac.elements();
 	            		 for(Element ele1:element)
 	            		 {
-	            			 if(fac.getName().equalsIgnoreCase("Environment"))
-	            			     facetInstance = new ClassifyPost(ele1.getName(),ele1.elementText("Item"));
-	            			 else if(fac.getName().equalsIgnoreCase("Focus"))
-	            				 facetInstance = new ClassifyPost("Focus",ele1.elementText("Item"));
+//	            			 if(fac.getName().equalsIgnoreCase("Environment"))
+//	            			     facetInstance = new ClassifyPost(ele1.getName(),ele1.elementText("Item"));
+//	            			 else if(fac.getName().equalsIgnoreCase("Focus"))
+//	            				 facetInstance = new ClassifyPost("Focus",ele1.elementText("Item"));
+	            			 
+//	            			 System.out.println(ele1.getName()+"|"+ele1.elementText("Item"));
 	            			
+	            			facetInstance = new ClassifyPost(ele1.getName(),ele1.elementText("Item"));
 //	            			Element model = ele1.element("Model");
 	            			
 	            			List<Element> modelElement= ele1.elements();
@@ -89,11 +55,12 @@ private List<Facet> itemList = new ArrayList<Facet>();
 	            					modelList.add(new Model(model.elementText("DomainDicS"),model.elementText("DomainDicP"),model.elementText("DomainDicO")
 	            							,model.elementText("PropertyS"),
 	            							model.elementText("PropertyP"),model.elementText("PropertyO"),
-	            							model.elementText("DomainVerb"),model.elementText("Code"),
+	            							model.elementText("DomainVerb"),model.elementText("Code"),model.elementText("Tag"),
 	            							model.elementText("Effect"),model.elementText("Question"),model.elementText("Tense"),
 	            							model.elementText("State")));
 	            				}
 	            			}
+	            			
 	            			
 	            			facetInstance.initModel(modelList);
 	            			itemList.add(facetInstance);
@@ -109,13 +76,18 @@ private List<Facet> itemList = new ArrayList<Facet>();
 	
 	public void init()
 	{
-		
-	        
+		        
 	}
 	
 	public List<Facet> getItem()
 	{
 		return itemList;
 	}
+	
+	public static void main(String args[])
+	{
+		new InitFacetItem();
+	}
+	
 
 }

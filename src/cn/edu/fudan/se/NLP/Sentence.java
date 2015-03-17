@@ -36,7 +36,7 @@ public class Sentence {
 	
 	public void setClause(List<List<WordProperty>> splitList)
 	{
-		String question = "",tense = "";
+		String question = Global.declaration,tense = Global.present;
 		for(List<WordProperty> list:splitList)
 		{
 			Clause clause;
@@ -46,8 +46,6 @@ public class Sentence {
 				word += wp.getWord() +" ";
 				if(wp.getProperty().equals("VBD"))
 					tense = Global.past;
-				if(wp.getProperty().equals("WRB"))
-					question = Global.question;
 			}
 			if(sentence.contains("?"))
 			{

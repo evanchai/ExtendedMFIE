@@ -10,7 +10,9 @@ List<String> list = new ArrayList<String>();
 	
 	public Produce()
 	{
-		list.add("throw");list.add("produce");list.add("make");list.add("give");
+		list.add("throw");list.add("produce");list.add("make");
+		list.add("generate");list.add("create");list.add("develop");
+		list.add("write");list.add("build");
 		
 	}
 

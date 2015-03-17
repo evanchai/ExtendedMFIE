@@ -58,7 +58,7 @@ public class Predicate {
     	{
     		if(wp.getProperty().contains("V"))
     		{
-    			synonyms +=InitDomainDic.getInstance().getSynonyms(wp.getLemmaWord())+ ",";
+    			synonyms +=InitDomainDic.getInstance().getSynonyms(wp.getLemmaWord(),wp.getWord())+ ",";
     		}
     	}
     	

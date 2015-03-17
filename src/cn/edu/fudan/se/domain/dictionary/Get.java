@@ -12,7 +12,7 @@ List<String> list = new ArrayList<String>();
 	public Get()
 	{
 		list.add("get");list.add("receive");list.add("obtain");list.add("meet");
-		list.add("have");
+		list.add("have");list.add("read");
 
 		
 	}

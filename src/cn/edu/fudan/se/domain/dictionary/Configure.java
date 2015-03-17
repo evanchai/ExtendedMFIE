@@ -11,8 +11,7 @@ List<String> list = new ArrayList<String>();
 	
 	public Configure()
 	{
-		list.add("set");list.add("configure");
-		list.add("reset");
+		list.add("configure");
 		
 	}
 

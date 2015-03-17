@@ -90,6 +90,7 @@ public class TestCoreNLP {
 		
 		
 	}
+	
 	public void CoreNLP(String text)
 	{
 		sentenceList.clear();
@@ -115,11 +116,13 @@ public class TestCoreNLP {
 				String pos = token.get(PartOfSpeechAnnotation.class);
 				String lemma = token.get(LemmaAnnotation.class); 
 				
-//				System.out.println(word +"  " + pos);
+				System.out.println(word +"  " + pos);
 				if(word.equals("-LRB-"))
 					word = "(";
-				if(word.equals("-RRB-"))
+				else if(word.equals("-RRB-"))
 					word = ")";
+				else if(word.equals("dont")||word.equals("doesnt")||word.equals("isnt"))
+					pos = "VB";
 				
 				wp = new WordProperty(word,lemma,pos,true);
 				wordProperty.add(wp);
@@ -177,22 +180,17 @@ public class TestCoreNLP {
 			if(!wp.getProperty().equals("CC")&&!wp.getWord().equalsIgnoreCase("because")&&
 					!wp.getProperty().equals(",")&&!wp.getProperty().equals(":")&&!wp.getWord().equalsIgnoreCase("When")
 					&&!wp.getWord().equalsIgnoreCase("that")&&!wp.getWord().equalsIgnoreCase("which")&&
-					!wp.getWord().equalsIgnoreCase("where"))
+					!wp.getWord().equalsIgnoreCase("where")&&!wp.getWord().equalsIgnoreCase("how"))
 			{
 				tempList.add(wp);
 			}else
 			{
-//				ccWp =wp;
-//				System.out.println("judge:"+judgeClause(tempList));
-//				System.out.println("�Ӿ䣺");
-//				for(int k = 0 ; k < tempList.size(); k++)
+//				if(i+1<num&&wp.getProperty().equals("WRB"))
 //				{
-//					System.out.print(tempList.get(k).getWord() +" ");
-//				}
-//				System.out.println(judgeClause(tempList));
-//				if(tempList.size()==1)//(, and)����tempListֻ��һ��and
+//					tempList.add(wp);
 //					continue;
-				
+//				}
+//				else 
 				if(judgeClause(tempList))//�ж��Ƿ����־�
 				{
 					splitList.add(coypList(tempList));
@@ -206,8 +204,10 @@ public class TestCoreNLP {
 							splitList.add(coypList(tempList));
 						}else
 						{
-							List<WordProperty> previousList = splitList.get(tempSize-1);
-							previousList.addAll(tempList);
+							
+								List<WordProperty> previousList = splitList.get(tempSize-1);
+						    	previousList.addAll(tempList);
+				
 						}
 					}
 				}
@@ -279,7 +279,7 @@ public class TestCoreNLP {
 				{
 					wp2 = wpList.get(1);
 				}
-				if(wp1.getProperty().equals("WRB")&&(wp2.getProperty().equals("VBP")||wp2.getProperty().equals("VBZ")))//What do,What does,How to
+				if((wp1.getProperty().equals("WRB")||wp1.getProperty().equals("WP"))&&(wp2.getProperty().equals("VBP")||wp2.getProperty().equals("VBZ")))//What do,What does,How am i able to
 				{
 					if(iS)
 					{
@@ -287,8 +287,9 @@ public class TestCoreNLP {
 						wpList.remove(1);
 					}else
 					{
-						wpList.remove(0);
-						wpList.remove(0);
+						wpList.remove(1);
+						wpList.add(2,wp2);
+						
 					}
 					translateList.add(wpList);
 			
@@ -299,7 +300,7 @@ public class TestCoreNLP {
 //					wpList.remove(0);
 //					translateList.add(wpList);
 //				}
-				else if(wp1.getProperty().equals("MD")&&wp2.getProperty().equals("PRP"))//Can you
+				else if(wp1.getProperty().equals("MD"))//Can you
 				{
 					if(iS)
 					{
@@ -318,8 +319,29 @@ public class TestCoreNLP {
 					if(iS)
 					{
 						wpList.remove(1);
+						wpList.add(2,wp1);
 					}else
+					{
 						wpList.remove(0);
+						wpList.add(1,wp1);
+					}
+					translateList.add(wpList);
+				}
+				else if(wp1.getProperty().equals("WRB")&&wp2.getProperty().equals("MD"))//how can
+				{
+					if(iS)
+					{
+						if(num>=4)
+						{
+							wpList.remove(2);
+							wpList.add(3, wp2);
+						}
+			
+					}else
+					{
+						wpList.remove(1);
+						wpList.add(2, wp2);
+					}
 					translateList.add(wpList);
 				}
 				else
@@ -508,7 +530,7 @@ public class TestCoreNLP {
 		            		||wp.getProperty().equals("VBN")||wp.getProperty().equals("VBP")
 		            		||wp.getProperty().equals("VBZ")||wp.getProperty().equals("VB"))
 		            		||wp.getProperty().equals("VE")||wp.getProperty().equals("VC")
-		            		||(wp.getProperty().equals("VBG")&&i == 0))
+		            		||(wp.getProperty().equals("VBG")&&i == 0)||wp.getProperty().equals("TO"))
 		         {
 		        	 int  tempIndex  = verbPhrase(i,wpList);
 		        	
@@ -626,8 +648,8 @@ public class TestCoreNLP {
 		{
 			wp = wpList.get(i);
 			pointer ++;
-			if(wp.getProperty().equals("IN"))
-				return i;
+//			if(wp.getProperty().equals("IN"))
+//				return i;
 			if(wp.getProperty().equals("RB"))
 				return i;
 			if(wp.getProperty().equals("CC"))
@@ -692,7 +714,7 @@ public class TestCoreNLP {
 					  if(tempWp.getProperty().contains("NN")||tempWp.getProperty().equals("PRP")||
 								tempWp.getProperty().equals("VBG")||tempWp.getProperty().equals("WDT")
 								||tempWp.getProperty().equals("PRP")||tempWp.getProperty().equals("EX")
-								||tempWp.getProperty().equals("FW")||tempWp.getProperty().equals("DT"))
+								||tempWp.getProperty().equals("FW")||tempWp.getProperty().equals("DT")||tempWp.getProperty().equals("WRB"))
 					  {
 						  return true;
 					  }
@@ -724,6 +746,9 @@ public class TestCoreNLP {
 				
 				System.out.println("Subject["+subject.toString()+"]" +" Predicate["+predicate.toString()+"]"+"["+predicate.getSynonyms()+"]"+
 						" Object["+object.toString()+"]"+" Authority["+clause.getAuthority()+"]");
+				System.out.println("Effect:"+clause.getAuthority()+"| Question:"+clause.getQuestion()
+						+"| Tense:"+clause.getPresent()+"| Translation:"+clause.getTranslation()
+						+"| Condition:"+clause.getCondition());
 				System.out.println("-------");
 //				System.out.println("Subject["+subject.getSubject()+"]" +"S-E["+subject.getEnvironment()+"]"+" Predicate["+predicate.getPredicate()+"-"+predicate.getSynonyms()+"]"+ " P-E["+predicate.getEnvironment()+"]"
 //				+" Object["+object.getObject()+"]" + "O-E["+object.getEnvironment()+"]"+" Authority["+clause.getAuthority()+"]");
@@ -772,9 +797,11 @@ public class TestCoreNLP {
 //				+ "To use the native server-side prepared statements, you should explicitly set it ";
 		
 //		String text = "What is the simplest way to present a database for a set of records in C#?";
-        String text = "it decided an animal.";
-
-
+//        String text = "I try to get data from MySQL in Java Project it works, but if I use Android Project it doesn't work.";
+//		String text = "The motivation behind this is that I want to connect to an online database without a running PHP server, just from a JavaScript embedded in the local page.";
+//        String text = "I'm wondering how can upload files to specific cookbook version.";
+        String text = "I'm completely new to Laravel.";
+//		String text = "But if i dont know  how to connect my application to the database using ODBC?";;
 		TestCoreNLP tcNLP = new TestCoreNLP();
 		tcNLP.CoreNLP(text);
 		System.out.println("------------------------");

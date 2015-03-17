@@ -12,6 +12,7 @@ List<String> list = new ArrayList<String>();
 	public Use()
 	{
 		list.add("make");list.add("use");list.add("need");
+		list.add("apply");list.add("have");
 		
 	}
 

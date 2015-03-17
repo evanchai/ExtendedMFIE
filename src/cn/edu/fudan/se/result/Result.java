@@ -41,7 +41,8 @@ public class Result {
     {
         PostDAOImpl pdi = new PostDAOImpl();
         System.out.println(queryToken);
-        posts = pdi.findTestPosts(queryToken);
+//        posts = pdi.findTestPosts(queryToken);
+        posts = pdi.findFullPosts(queryToken);
 //        init();
     }
     

@@ -11,9 +11,9 @@ List<String> list = new ArrayList<String>();
 	
 	public Support()
 	{
-		list.add("help");
 		list.add("provide");
 		list.add("give");
+		list.add("post");
 		
 	}
 

@@ -33,6 +33,10 @@ public class ClassifyPost extends Facet{
 	    private Grade grade;
 	    boolean isMatch;
 	    
+	    boolean isTag = true;
+	    
+	    boolean isCode = true;
+	    
 	    public ClassifyPost(String focus,String focusItem)
 	    {
 	    	this.focus = focus;
@@ -44,6 +48,11 @@ public class ClassifyPost extends Facet{
 		{
 			this.isMatch = isMatch;
 		}
+	    
+	    public void setIsTag(boolean isTag)
+	    {
+	    	this.isTag = isTag;
+	    }
 		public boolean isMatch()
 		{
 			return this.isMatch;
@@ -77,16 +86,36 @@ public class ClassifyPost extends Facet{
 			}
 			return false;
 		}
-		public boolean judgePredicate(String[] domainVerb,Predicate preE,String question)
+		public boolean judgeReversePredicate(String[] domainVerb,Predicate preE)
 		{
 			for(String verb:domainVerb)
 			{
-				if((preE.getSynonyms().contains(verb)))
-					return true;
+				if(verb.contains("~"))
+				{
+					verb = verb.replace("~", "");
+					if(preE.getSynonyms().contains(verb))
+						return false;
+				}
+
+			}
+			return true;
+		}
+		
+		public boolean judgePredicate(String[] domainDic,List<WordProperty> list)
+		{
+		
+			for(String dic:domainDic)
+			{
+				
+				for(WordProperty wp:list)
+				{
+					if(wp.getWord().equalsIgnoreCase(dic))
+						return true;
+				}
 			}
 			return false;
 		}
-		public List<WordProperty> judgeSpecialLanguage(List<WordProperty> list)
+		public List<WordProperty> judgeSpecialWordGroup(List<WordProperty> list)
 		{
 	    	int lenght = list.size();
 			for(int i = 0; i < lenght ; i++)
@@ -103,19 +132,55 @@ public class ClassifyPost extends Facet{
 	    			{
 	    				list.get(i).setWord("C#");
 	    			}
+	    		}else if(list.get(i).getWord().equalsIgnoreCase("sql"))
+	    		{
+	    			if(i == lenght-1)
+	    			{
+	    				list.get(i).setWord("sql");
+	    			}else if(list.get(i+1).getWord().equalsIgnoreCase("server"))
+	    			{
+	    				list.get(i).setWord("sql server");
+	    			}
+	    		}else if(list.get(i).getWord().equalsIgnoreCase("node"))
+	    		{
+	    			if(i == lenght-1)
+	    			{
+	    				list.get(i).setWord("node");
+	    			}else if(list.get(i+1).getWord().equalsIgnoreCase("."))
+	    			{
+	    				list.get(i).setWord("node.js");
+	    			}
+	    		}else if(list.get(i).getWord().equalsIgnoreCase("visual"))
+	    		{
+	    			if(i == lenght-1)
+	    			{
+	    				list.get(i).setWord("visual");
+	    			}else if(list.get(i+1).getWord().equalsIgnoreCase("studio"))
+	    			{
+	    				list.get(i).setWord("visual studio");
+	    			}
+	    		}else if(list.get(i).getWord().equalsIgnoreCase("java"))
+	    		{
+	    			if(i == lenght-1)
+	    			{
+	    				list.get(i).setWord("java");
+	    			}else if(list.get(i+1).getWord().equalsIgnoreCase("ee"))
+	    			{
+	    				list.get(i).setWord("java ee");
+	    			}
 	    		}
 	    	}
 			return list;
 		}
 		public boolean judgeAfterPre(List<WordProperty> list,String[] property,String[] domainDic)
 		{
-			list = judgeSpecialLanguage(list);
+			list = judgeSpecialWordGroup(list);
 			for(String p:property)
 			{
 				boolean isOpen = false;
 				for(WordProperty wp:list)
 				{
-					if(wp.getProperty().equalsIgnoreCase(p))
+					if(wp.getProperty().equalsIgnoreCase(p)&&!wp.getWord().equalsIgnoreCase("without"))
 					{
 						isOpen = true;
 					}
@@ -135,7 +200,7 @@ public class ClassifyPost extends Facet{
 		}
 		public boolean judgeBeforePre(List<WordProperty> list,String[] property,String[] domainDic)
 		{
-			list = judgeSpecialLanguage(list);
+			list = judgeSpecialWordGroup(list);
 			for(String p:property)
 			{
 				boolean isOpen = true;
@@ -195,14 +260,34 @@ public class ClassifyPost extends Facet{
 			return false;
 		}
 		
+		public boolean judgeTag(String tag,String[] tagDic)
+		{
+			String[] tags = tag.split(" ");
+			for(String dic:tagDic)
+			{
+				for(String t:tags)
+				{
+					if((t.contains("-")||t.contains("."))&&!t.contains("sql")&&t.toLowerCase().contains(dic.toLowerCase()))
+						return true;
+					else if(dic.equalsIgnoreCase(t))
+						return true;
+				}
+			}
+			return false;
+		}
+		
 		public boolean isTrueEffect(String effect,Clause clause)
 		{
 		
-			if(clause.getAuthority().equals(effect))
-				return true;
-			else
-				return false;
+			String[] effS = effect.split(",");
+			for(String s:effS)
+			{
+				if(clause.getAuthority().equals(s))
+					return true;
+			}
+			return false;
 		}
+		
 		public boolean isTrueQuestion(String question,Clause clause)
 		{
 			
@@ -211,13 +296,35 @@ public class ClassifyPost extends Facet{
 			else
 				return false;
 		}
+		public boolean isTrueTense(String tense,Clause clause)
+		{
+			if(clause.getPresent().equals(tense))
+				return true;
+			else
+				return false;
+		}
+		
+		public boolean isTrueTranslation(Clause clause)
+		{
+			if(clause.getTranslation().equals("Y"))
+				return true;
+			return false;
+		}
+		
+		public boolean isTrueCondition(Clause clause)
+		{
+			if(clause.getCondition().equals("Y"))
+				return true;
+			return false;
+		}
 		private void MatchPattern(Clause clause,Post post)
 		{
 			Subject subE = clause.getSubject();
 			Predicate preE = clause.getPredicate();
 			Object objE = clause.getObject();
 			String[] domainDicS,domainDicP,domainDicO
-			,propertyS,propertyO,propertyP,domainVerb,codeDic;
+			,propertyS,propertyO,propertyP,domainVerb,
+			codeDic,tagDic;
 			String effect,question,tense,state;
 			boolean isEffect;
 			for(Model model:modelList)
@@ -227,8 +334,10 @@ public class ClassifyPost extends Facet{
 				domainDicO = model.getDomainDicO();
 				propertyS = model.getPropertyS();
 				propertyO = model.getPropertyO();
+				propertyP = model.getPropertyP();
 				domainVerb = model.getDomainVerb();
 				codeDic = model.getCodeDic();
+				tagDic = model.getTagDic();
 				effect = model.getEffect();
 				question = model.getQuestion();
 				tense = model.getTense();
@@ -237,63 +346,218 @@ public class ClassifyPost extends Facet{
 				switch(Integer.parseInt(state))
 				{
 				   case 1:
+				   {
 					   if(judgeAfterPre(objE.getobjectList(),propertyO,domainDicO)||
 							   judgeAfterPre(subE.getSubjectList(),propertyS,domainDicS))
 					   {
 						   put(post);
 					   }
 					   break;
+				   }
 				   case 2:
-					   if(judgePredicate(domainVerb,preE)&&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO)&&
-							   isTrueEffect(effect,clause))
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)
+							   &&judgePredicate(domainVerb,preE)&&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO) )
 					   {
 						   put(post);
 					   }
 					   break;
+				   }
 				   case 3:
-					   if(judgePredicate(domainVerb,preE)&&isTrueEffect(effect,clause))
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&judgePredicate(domainVerb,preE))
 					   {
 						   put(post);
 					   }
 					   break;
+				   }
 				   case 4:
+				   {
 					   if(judgeCode(post.post_body_code,codeDic))
 					   {
 						   put(post);
 					   }
 					   break;
+				   }
 				   case 5:
+				   {
 					   if(!post.post_body_code.equals(""))
 					   {
 							put(post);
 					   }
 					   break;
+				   }
 				   case 6:
-					   if(judgePredicate(domainVerb,preE)&&isTrueQuestion(question,clause))
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&judgePredicate(domainVerb,preE))
 					   {
 						   put(post);
 					   }
 					   break;
+				   }
 				   case 7:
-					   if(judgePredicate(domainVerb,preE)&&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO)&&
-							   isTrueQuestion(question,clause))
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+							   judgePredicate(domainVerb,preE)&&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
 					   {
 						   put(post);
 					   }
 					   break;
+				   }
 				   case 8:
-					   if(judgeBeforePre(objE.getobjectList(),propertyO,domainDicO)&&isTrueQuestion(question,clause))
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
 					   {
 						   put(post);
 					   }
 					   break;
+				   }
+				   case 9:
+				   {
+					   if(isTag)
+					   {
+						   isTag = false;
+						   if(judgeTag(post.getPost_tag(),tagDic))
+						   {
+							   put(post);
+						   }
+							
+					   }
+					   break;
+				   }
+				   case 10:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+							   judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)
+							   )
+					   {
+						   put(post);
+					   }
+					   break;
+				   }
+				   case 11:
+				   {
+					 
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+					     judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)
+						 &&judgePredicate(domainDicP,preE.getPredicateList()))
+					   {
+						   put(post);
+					   }
+					   break;
+				   }
+				   case 12:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+						 judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS))
+					   {
+						  put(post);
+					   }
+					   break;
+				   }
+				   case 13:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+						 judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)&&
+						 judgePredicate(domainVerb,preE))
+					  {
+								  put(post);
+					  }
+					   break;
+				   }
+				   case 14:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+						 judgePredicate(domainVerb,preE))
+					  {
+								  put(post);
+					  }
+					   break;
+				   }
+				   case 15:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+							   judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
+						{
+							 put(post);
+						}
+					   break;
+				   }
+				   case 16:
+				   {
+					   if(judgePredicate(domainDicP,preE.getPredicateList())&& judgePredicate(domainVerb,preE))
+						{
+							 put(post);
+						}
+					   break;
+				   }
+				   case 17:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+							   judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)&&
+							   judgeReversePredicate(domainVerb,preE))
+						{
+							 put(post);
+						}
+					   break;
+				   }
+				   case 18:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+							   judgeBeforePre(preE.getPredicateList(),propertyP,domainDicP))
+						{
+							 put(post);
+						}
+					   break;  
+				   }
+				   case 19:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+							   judgeBeforePre(preE.getPredicateList(),propertyP,domainDicP))
+						{
+							 put(post);
+						}
+					   break; 
+				   }
+				   case 20:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+							   judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)
+							   &&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
+					   {
+						   put(post);
+					   }
+					   break;
+				   }
+				   case 21:
+				   {
+					   if(judgeAfterPre(preE.getPredicateList(),propertyP,domainDicP))
+						{
+							 put(post);
+						}
+					   break;  
+				   }
+				   case 22:
+				   {
+					   if(judgeBeforePre(objE.getobjectList(),propertyO,domainDicO)&& judgePredicate(domainVerb,preE))
+					   {
+						   put(post);
+					   }
+				   }
+				   case 23:
+				   {
+					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
+							   judgeBeforePre(preE.getPredicateList(),propertyP,domainDicP)&&
+							   judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
+						{
+							 put(post);
+						}
+					   break; 
+				   }
 					   default:
 					   {
 						   
 					   }
-					   
-					   
-				   
 				}
 			}
 		}
@@ -309,20 +573,53 @@ public class ClassifyPost extends Facet{
 			// TODO Auto-generated method stub
 			grade = new Grade();
 			Float point;
-			for(Sentence sen:sentence)
+			Clause clause,nextClause;
+			Sentence sen,nextSen;
+			int senSize = sentence.size();
+			for(int i = 0;i < senSize; i++)
 			   {
 				if(isMatch())
 					break;
-				   
+				   sen = sentence.get(i);
 				   List<Clause> clauseList = sen.getClauseList();
-					for(Clause clause:clauseList)
-					{
+				   int clauseSize = clauseList.size();
+				   for(int j = 0;j < clauseSize;j++)
+				   {
 						if(isMatch())
 							break;
+				   
+
+					   if(j+1<clauseSize)
+					   {
+						   nextClause = clauseList.get(j+1);
+						 //I try to get data from MySQL in Java Project it works, but when I use Android Project it doesn't work. 语句间的转折
+						   if(isTrueTranslation(nextClause)&&isTrueCondition(nextClause))
+							   continue;
+						   //There are many ways to connect through PHP scrip/ json/xml/ webservices. But i dont need that. 
+						   if(isTrueTranslation(nextClause)&&isTrueEffect("DENY",nextClause))
+							   continue;
+					   }
+					   if((j+1==clauseSize)&&(i+1<senSize))
+					   {
+						   nextSen = sentence.get(i+1);
+						   
+						   int num = nextSen.getClauseList().size();
+						   if(num >=1)
+						   {
+							   nextClause = nextSen.getClauseList().get(0);
+							   if(isTrueTranslation(nextClause)&&isTrueCondition(nextClause))
+								   continue;
+							   if(isTrueTranslation(nextClause)&&isTrueEffect("DENY",nextClause))
+								   continue;
+						   }
+					   }
+					
+					   clause = clauseList.get(j);
 //						System.out.println("Clause:"+clause.getClause());
-						Subject subject = clause.getSubject();
-						Predicate predicate = clause.getPredicate();
-						Object object = clause.getObject();
+//						System.out.println("Effect:"+clause.getAuthority());
+//						System.out.println("Question:"+clause.getQuestion());
+//						System.out.println("Tense:"+clause.getPresent());
+
 //						point = calculateGrade.Grade(subject, predicate, object, clause, query);
 //						grade.addGrade(point);
 						MatchPattern(clause,post);
@@ -340,8 +637,6 @@ public class ClassifyPost extends Facet{
 		public void showPost() {
 			// TODO Auto-generated method stub
 			show(postM);
-			
-
 			
 		}
 

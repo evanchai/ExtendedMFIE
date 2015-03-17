@@ -1,4 +1,5 @@
 package cn.edu.fudan.se.domain.dictionary;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ List<String> list = new ArrayList<String>();
 	public Query()
 	{
 		list.add("query");
+
 		
 	}
 
@@ -27,4 +29,5 @@ List<String> list = new ArrayList<String>();
 		// TODO Auto-generated method stub
 		return Global.QUERY;
 	}
+
 }

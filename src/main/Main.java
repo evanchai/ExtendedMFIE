@@ -46,10 +46,11 @@ public class Main {
 
 		postList = result.getPosts();
  		
-// 		postList = new ArrayList<Post>();
-// 		String title = "What is the easiest way to duplicate an activerecord record?";
-// 		String body = "";
-// 		postList.add(new Post(0,title,body,"configure",0,1,0,0,null,null));
+ 		postList.clear();
+ 		String title = "I just installed SQL Server Express 2012 on my home server";
+ 		String body = "";
+ 		postList.add(new Post(0,title,body,"www",0,1,0,0,null,null,null));
+
 		System.out.println("Size:"+postList.size());
 		ift = new InitFacetItem();
 		itemList = ift.getItem();
@@ -73,12 +74,13 @@ public class Main {
 		   for(Facet item:itemList)
 		   {
 			   item.setIsMatch(false);
+			   item.setIsTag(true);
 			   
 		   }
 		   postNum++;
 		   System.out.println("NUM:"+postNum+"|"+post.postId);
 		
-//           if(postNum == 29||postNum == )
+//           if(post.postId!=42996)
 //        	   continue;
 		   String text = post.getText((post.post_body_text));
 		   text = post.post_title +"." + text;
@@ -88,7 +90,15 @@ public class Main {
 		   sentenceList = tcNLP.getSentence();
 		   for(Facet item:itemList)
 		   {
+
+	
+//			   if(item.getEnvir().contains("Exception"))
+//			   {
+//				   item.init(sentenceList, post, queryClause);
+//			   }
 			   item.init(sentenceList, post, queryClause);
+
+			
 			   
 		   }
 
@@ -209,7 +219,7 @@ public class Main {
 	
 	public static void main(String args[])
 	{
-		Main main = new Main("How to connect to mysql database.");
+		Main main = new Main("Spring");
 //		main.matchFacetItem();
 //		main.showEnvironment();
 	}

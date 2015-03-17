@@ -9,11 +9,12 @@ public class Negative implements DomainDictionary{
 	
 	public Negative()
 	{
-		negativeList.add("no");negativeList.add("forbid");negativeList.add("prohibit");negativeList.add("interdict");
+		negativeList.add("forbid");negativeList.add("prohibit");negativeList.add("interdict");
 		negativeList.add("proscribe");negativeList.add("veto");negativeList.add("disallow");negativeList.add("no");
-		negativeList.add("not");negativeList.add("fail");negativeList.add("break");negativeList.add("die");
-		negativeList.add("n't");negativeList.add("prevent");negativeList.add("forestall");
+		negativeList.add("fail");negativeList.add("break");negativeList.add("die");
+		negativeList.add("prevent");negativeList.add("forestall");
 		negativeList.add("foreclose");negativeList.add("preclude");
+		negativeList.add("hard");negativeList.add("misunderstand");
 	
 	}
 	@Override

@@ -2,8 +2,10 @@ package cn.edu.fudan.se.NLP;
 
 import java.util.List;
 
-import cn.edu.fudan.se.Partern.Expression;
+import cn.edu.fudan.se.domain.dictionary.Condition;
+import cn.edu.fudan.se.domain.dictionary.Expression;
 import cn.edu.fudan.se.domain.dictionary.Negative;
+import cn.edu.fudan.se.domain.dictionary.Translation;
 import cn.edu.fudan.se.util.Global;
 
 public class Clause {
@@ -15,6 +17,10 @@ public class Clause {
 	private Predicate predicate;
 	
 	private Object object;
+	
+	private String translation = "N";
+	
+	private String condition = "N";
 	
 	private String authority = Global.accept;
 	
@@ -37,7 +43,14 @@ public class Clause {
 	{
 		return tense;
 	}
-	
+	public String getTranslation()
+	{
+		return translation;
+	}
+	public String getCondition()
+	{
+		return condition;
+	}
 	public void init()
 	{
 		if(Expression.getInstance().Authority(clause))
@@ -56,6 +69,18 @@ public class Clause {
 				}
 			}
 
+		}
+		
+		Translation trans = new Translation();
+		if(trans.Authority(clause))
+		{
+			translation = "Y";
+		}
+		
+		Condition cond = new Condition();
+		if(cond.Authority(clause))
+		{
+			condition = "Y";
 		}
 
 	}

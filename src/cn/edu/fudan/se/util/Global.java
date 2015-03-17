@@ -36,10 +36,17 @@ public class Global {
 	public static String REGARD = "REGARD";
 	public static String PRODUCE = "PRODUCE";
 	public static String GIVE = "GIVE";
-	
-	
-	
-	
+	public static String SEARCH = "SEARCH";
+	public static String EXPLAIN = "EXPLAIN";
+	public static String UNDERSTAND = "UNDERSTAND";
+	public static String BE = "BE";
+	public static String DOES = "DOES";
+	public static String INSTALL = "INSTALL";
+	public static String CONVERT = "CONVERT";
+	public static String SEND = "SEND";
+	public static String PARSE = "PARSE";
+	public static String REDIRECT = "REDIRECT";
+
 	public static String question = "QUESTION";
 	public static String declaration = "DECLARATION";
 	public static String present = "PRESENT";

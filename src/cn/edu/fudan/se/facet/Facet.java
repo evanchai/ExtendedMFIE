@@ -27,6 +27,10 @@ public abstract class Facet {
 	{
 		return false;
 	}
+	public void setIsTag(boolean isTag)
+	{
+		
+	}
 	public boolean isTrue(String text)
 	{
 		return false;
@@ -74,7 +78,7 @@ public abstract class Facet {
 	      for(Map.Entry<Post, Grade> map:list_Data)
 	      {
 //	    	  System.out.println(map.getValue().getGrade()+"|"+map.getKey().post_title);
-	    	  System.out.println(map.getKey().post_title);
+	    	  System.out.println(map.getKey().postId+"|"+map.getKey().post_title);
 	      }
 	    }
 	  

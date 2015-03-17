@@ -310,6 +310,36 @@ public class PostDAOImpl implements PostDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public List<Post> findFullPosts(String keywords) {
+		Connection conn = null;
+		try {
+			conn = DBConnection.getConnection();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		PreparedStatement pstmt = null;
+		List<Post> posts = new ArrayList<Post>();
+
+		System.out.println("String:"+keywords);
+
+		
+		String SQLString = "SELECT * FROM stackoverflowdata.posts  where PostTypeId =1 and CONCAT(tags) regexp replace('"
+				+keywords+"',',','|') limit 10";
+
+		try {
+			pstmt = conn.prepareStatement(SQLString);
+			ResultSet rs = pstmt.executeQuery();
+			posts = constructedPostList(rs);
+		} catch (Exception ex) {
+			System.out.println("Error : " + ex.toString());
+		} finally {
+			DBConnection.close(conn);
+			DBConnection.close(pstmt);
+		}
+		return posts;
+	}
 	public List<Post> findTestPosts(String keywords) {
 		Connection conn = null;
 		try {
@@ -320,11 +350,13 @@ public class PostDAOImpl implements PostDAO {
 		}
 		PreparedStatement pstmt = null;
 		List<Post> posts = new ArrayList<Post>();
-		// String keywords = "java,mysql,database";
-		// generate query string based on separate keywords
-		// using regexp replace('keyword1,keyword2',',','|')
+
 		System.out.println("String:"+keywords);
-		String SQLString = "SELECT * FROM stackoverflowdata.testposts";
+//		String SQLString = "SELECT * FROM stackoverflowdata.testposts";
+		
+		String SQLString = "SELECT * FROM stackoverflowdata.posts  where PostTypeId =1 and CONCAT(title,tags,body) regexp replace('"
+				+keywords+"',',','|')";
+		
 	//	where Id>=696 and Id<=234888
 //		String SQLString = "SELECT * FROM stackoverflowdata.posts WHERE PostTypeId = 1 and title like '%how%' and title like '%connect%' and title like '%mysql%' limit 20";
 //		String SQLString = "SELECT * FROM stackoverflowdata.posts WHERE CONCAT(title,tags,body) like '"
