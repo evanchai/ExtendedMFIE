@@ -6,16 +6,17 @@ import java.util.List;
 
 import cn.edu.fudan.se.NLP.Clause;
 import cn.edu.fudan.se.NLP.Predicate;
-import cn.edu.fudan.se.NLP.Sentence;
+import cn.edu.fudan.se.facet.Sentence;
 import cn.edu.fudan.se.NLP.Subject;
 import cn.edu.fudan.se.NLP.Object;
 import cn.edu.fudan.se.NLP.WordProperty;
 import cn.edu.fudan.se.facet.CalculateGrade;
 import cn.edu.fudan.se.facet.Facet;
 import cn.edu.fudan.se.facet.Grade;
-import cn.edu.fudan.se.facet.Model;
+import cn.edu.fudan.se.facet.Pattern;
 import cn.edu.fudan.se.util.Global;
 
+import com.stackoverflow.bean.Answer;
 import com.stackoverflow.bean.Post;
 
 public class ClassifyPost extends Facet{
@@ -24,7 +25,7 @@ public class ClassifyPost extends Facet{
 	    
 	    private CalculateGrade calculateGrade = new CalculateGrade();
 	    
-	    private List<Model> modelList;
+	    private List<Pattern> patternList;
 	    
 	    private String focus;
 	    
@@ -58,9 +59,9 @@ public class ClassifyPost extends Facet{
 			return this.isMatch;
 		}
 	    
-	    public void initModel(List<Model> modelList)
+	    public void initModel(List<Pattern> patternList)
 	    {
-	    	this.modelList = modelList;
+	    	this.patternList = patternList;
 	    }
 		@Override
 		public boolean isTrue(String s) {
@@ -186,6 +187,10 @@ public class ClassifyPost extends Facet{
 					}
                      if(isOpen)
 					{
+                    	if(domainDic.length==1&&domainDic[0].equals(""))
+                    	{
+                    		return true;
+                    	}
 						for(String dic:domainDic)
 				    	{
 				    		if(wp.getWord().equalsIgnoreCase(dic))
@@ -215,6 +220,7 @@ public class ClassifyPost extends Facet{
 					{
 						for(String dic:domainDic)
 				    	{
+						
 				    		if(wp.getWord().equalsIgnoreCase(dic))
 				    			return true;
 				    	}
@@ -317,247 +323,164 @@ public class ClassifyPost extends Facet{
 				return true;
 			return false;
 		}
-		private void MatchPattern(Clause clause,Post post)
+		public boolean judgeCode(Post post,Code code)
 		{
+			if(code.getAnswerHasCode().equalsIgnoreCase("y"))
+			{
+				  List<Answer> answerList = post.getAnswerList();
+				  if(answerList==null)
+					  return false;
+				   for(Answer answer:answerList)
+				   {
+					   if(!answer.post_body_code.equals(""))
+					   {
+						   return true;
+					   }
+				   }
+			}else if(!code.getCode()[0].equals(""))
+			{
+				return judgeCode(post.post_body_code,code.getCode());
+			}
+			return false;
+		}
+		
+		public boolean judgeTag(Post post,Tag tag)
+		{
+			return judgeTag(post.getPost_tag(),tag.getTag());
+		}
+		
+		public boolean judgeSentence(Sentence sentence,Clause clause)
+		{
+			
+			boolean result = true;
+			if(!sentence.getEffect().equalsIgnoreCase(""))
+			{
+				result = result && (this.isTrueEffect(sentence.getEffect(), clause));
+			}
+			if(!sentence.getQuestion().equalsIgnoreCase(""))
+			{
+				result = result && (this.isTrueQuestion(sentence.getQuestion(), clause));
+			}
+			if(!sentence.getTense().equalsIgnoreCase(""))
+			{
+				result = result && (this.isTrueTense(sentence.getTense(), clause));
+			}
+			List<Rule> ruleList = sentence.getRuleList();
+			int count = ruleList.size();
+			for(int i = 0; i<count;i++)
+			{
+				if(i==0)
+				{
+					result = result && judgeRule(ruleList.get(i),clause);
+				}else {
+					String logic = ruleList.get(i-1).getLogic();
+					if(logic.equalsIgnoreCase("or"))
+					{
+						result = result || judgeRule(ruleList.get(i),clause);
+					}else
+					{
+						result = result && judgeRule(ruleList.get(i),clause);
+					}
+				}
+			}
+			
+			return result;
+		}
+		
+		public boolean judgeRule(Rule rule,Clause clause)
+		{
+			String type = rule.getType();
+			String[] dic = rule.getDic();
+			String beforeAfter = rule.getBeforeAfter();
+			String[] property = rule.getProperty();
+			String[] domainverb = rule.getDomainVerb();
 			Subject subE = clause.getSubject();
 			Predicate preE = clause.getPredicate();
 			Object objE = clause.getObject();
-			String[] domainDicS,domainDicP,domainDicO
-			,propertyS,propertyO,propertyP,domainVerb,
-			codeDic,tagDic;
-			String effect,question,tense,state;
-			boolean isEffect;
-			for(Model model:modelList)
+			if(beforeAfter.equalsIgnoreCase("after"))
 			{
-				domainDicS = model.getDomainDicS();
-				domainDicP = model.getDomainDicP();
-				domainDicO = model.getDomainDicO();
-				propertyS = model.getPropertyS();
-				propertyO = model.getPropertyO();
-				propertyP = model.getPropertyP();
-				domainVerb = model.getDomainVerb();
-				codeDic = model.getCodeDic();
-				tagDic = model.getTagDic();
-				effect = model.getEffect();
-				question = model.getQuestion();
-				tense = model.getTense();
-				state = model.getState();
-				isEffect = isTrueEffect(effect,clause);
-				switch(Integer.parseInt(state))
+				if(type.equalsIgnoreCase("subject"))
 				{
-				   case 1:
-				   {
-					   if(judgeAfterPre(objE.getobjectList(),propertyO,domainDicO)||
-							   judgeAfterPre(subE.getSubjectList(),propertyS,domainDicS))
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 2:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)
-							   &&judgePredicate(domainVerb,preE)&&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO) )
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 3:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&judgePredicate(domainVerb,preE))
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 4:
-				   {
-					   if(judgeCode(post.post_body_code,codeDic))
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 5:
-				   {
-					   if(!post.post_body_code.equals(""))
-					   {
+				   return judgeAfterPre(subE.getSubjectList(),property,dic);
+				}else if(type.equalsIgnoreCase("object"))
+				{
+					   return judgeAfterPre(objE.getobjectList(),property,dic);
+				}else
+				{
+					if(!domainverb[0].equals(""))
+					{
+						return judgePredicate(domainverb,preE)&&judgeAfterPre(preE.getPredicateList(),property,dic);
+					}else
+					{
+						return judgeAfterPre(preE.getPredicateList(),property,dic);
+					}
+				}
+			}else if(beforeAfter.equalsIgnoreCase("before"))//before pre
+			{
+				if(type.equalsIgnoreCase("subject"))
+				{
+					return judgeBeforePre(subE.getSubjectList(),property,dic);
+				}else if(type.equalsIgnoreCase("object"))
+				{
+					   return judgeBeforePre(objE.getobjectList(),property,dic);
+				}else
+				{
+					if(!domainverb[0].equals(""))
+					{
+						return judgePredicate(domainverb,preE)&&judgeBeforePre(preE.getPredicateList(),property,dic);
+					}else
+					   return judgeBeforePre(preE.getPredicateList(),property,dic);
+				}
+			}else if(!domainverb[0].equals(""))
+			{
+				if(domainverb[0].contains("~"))
+				{
+					return judgeReversePredicate(domainverb, preE);
+				}else
+				{
+					return judgePredicate(domainverb,preE);
+				}
+			}else
+			{
+				return true;
+			}
+			
+		}
+		
+		
+		private void MatchPattern(Clause clause,Post post)
+		{
+			for(Pattern pattern:patternList)
+			{
+				if(pattern.getType().equalsIgnoreCase("sentence"))
+				{
+					List<Sentence> sentenceList = pattern.getSentence();
+					for(Sentence sen:sentenceList)
+					{
+						if(judgeSentence(sen,clause))
 							put(post);
-					   }
-					   break;
-				   }
-				   case 6:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&judgePredicate(domainVerb,preE))
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 7:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-							   judgePredicate(domainVerb,preE)&&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 8:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 9:
-				   {
-					   if(isTag)
-					   {
-						   isTag = false;
-						   if(judgeTag(post.getPost_tag(),tagDic))
-						   {
-							   put(post);
-						   }
-							
-					   }
-					   break;
-				   }
-				   case 10:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-							   judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)
-							   )
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 11:
-				   {
-					 
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-					     judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)
-						 &&judgePredicate(domainDicP,preE.getPredicateList()))
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 12:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-						 judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS))
-					   {
-						  put(post);
-					   }
-					   break;
-				   }
-				   case 13:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-						 judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)&&
-						 judgePredicate(domainVerb,preE))
-					  {
-								  put(post);
-					  }
-					   break;
-				   }
-				   case 14:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-						 judgePredicate(domainVerb,preE))
-					  {
-								  put(post);
-					  }
-					   break;
-				   }
-				   case 15:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-							   judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
-						{
-							 put(post);
-						}
-					   break;
-				   }
-				   case 16:
-				   {
-					   if(judgePredicate(domainDicP,preE.getPredicateList())&& judgePredicate(domainVerb,preE))
-						{
-							 put(post);
-						}
-					   break;
-				   }
-				   case 17:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-							   judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)&&
-							   judgeReversePredicate(domainVerb,preE))
-						{
-							 put(post);
-						}
-					   break;
-				   }
-				   case 18:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-							   judgeBeforePre(preE.getPredicateList(),propertyP,domainDicP))
-						{
-							 put(post);
-						}
-					   break;  
-				   }
-				   case 19:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-							   judgeBeforePre(preE.getPredicateList(),propertyP,domainDicP))
-						{
-							 put(post);
-						}
-					   break; 
-				   }
-				   case 20:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-							   judgeBeforePre(subE.getSubjectList(),propertyS,domainDicS)
-							   &&judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
-					   {
-						   put(post);
-					   }
-					   break;
-				   }
-				   case 21:
-				   {
-					   if(judgeAfterPre(preE.getPredicateList(),propertyP,domainDicP))
-						{
-							 put(post);
-						}
-					   break;  
-				   }
-				   case 22:
-				   {
-					   if(judgeBeforePre(objE.getobjectList(),propertyO,domainDicO)&& judgePredicate(domainVerb,preE))
-					   {
-						   put(post);
-					   }
-				   }
-				   case 23:
-				   {
-					   if(isTrueEffect(effect,clause)&&isTrueQuestion(question,clause)&&
-							   judgeBeforePre(preE.getPredicateList(),propertyP,domainDicP)&&
-							   judgeBeforePre(objE.getobjectList(),propertyO,domainDicO))
-						{
-							 put(post);
-						}
-					   break; 
-				   }
-					   default:
-					   {
-						   
-					   }
+					}
+				
+				}
+			  
+			}
+		}
+		public void MatchPattern(Post post)
+		{
+			
+			for(Pattern pattern:patternList)
+			{
+				if(pattern.getType().equalsIgnoreCase("tag"))
+				{
+
+					if(judgeTag(post,pattern.getTag()))
+						put(post);
+				}
+				if(pattern.getType().equalsIgnoreCase("code"))
+				{
+
+					if(judgeCode(post,pattern.getCode()))
+						put(post);
 				}
 			}
 		}
@@ -569,12 +492,12 @@ public class ClassifyPost extends Facet{
 		}
 		
 		@Override
-		public void init(List<Sentence> sentence,Post post,Clause query){
+		public void init(List<cn.edu.fudan.se.NLP.Sentence> sentence,Post post,Clause query){
 			// TODO Auto-generated method stub
 			grade = new Grade();
 			Float point;
 			Clause clause,nextClause;
-			Sentence sen,nextSen;
+			cn.edu.fudan.se.NLP.Sentence sen,nextSen;
 			int senSize = sentence.size();
 			for(int i = 0;i < senSize; i++)
 			   {

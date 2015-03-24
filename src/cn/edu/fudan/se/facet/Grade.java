@@ -19,14 +19,15 @@ public class Grade {
 	
 	public float getGrade()
 	{
-		float sum = 0;
-		int size = grade.size();
-		for(Float point:grade)
-		{
-			sum += point;
-		}
-		
-		return sum/size;
+//		float sum = 0;
+//		int size = grade.size();
+//		for(Float point:grade)
+//		{
+//			sum += point;
+//		}
+//		
+//		return sum/size;
+		return 0;
 	}
 
 }

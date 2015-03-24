@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import cn.edu.fudan.se.facet.PostFacetType;
-import cn.edu.fudan.se.filter.FilterPost;
+
 import cn.edu.fudan.se.util.Global;
 
 import com.stackoverflow.bean.*;
@@ -107,7 +107,7 @@ public class PostDAOImpl implements PostDAO {
 		List<Answer> answers = new ArrayList<Answer>();
 //		System.out.println("Id:"+postId);
 
-		String SQLString = "SELECT * FROM stackoverflowdata.posts WHERE ParentId="+postId+";";
+		String SQLString = "SELECT * FROM stackoverflow.posts WHERE ParentId="+postId+";";
 
 		try {
 //			pstmt = conn.prepareStatement(SQLString);
@@ -116,20 +116,20 @@ public class PostDAOImpl implements PostDAO {
 			while(rs.next())
 			{
 				//comment Attribute;
-				int post_typeId = rs.getInt("PostTypeId");
-				String post_title = rs.getString("title");
+//				int post_typeId = rs.getInt("PostTypeId");
+//				String post_title = rs.getString("title");
 				String post_body = rs.getString("body");
-				String post_tag = rs.getString("tags");
+//				String post_tag = rs.getString("tags");
 //				System.out.println("check:");
-				int post_comment_count = rs.getInt("CommentCount");//may be null
+//				int post_comment_count = rs.getInt("CommentCount");//may be null
 				//Answer Attribute;
-				int parentId = rs.getInt("parentId");//may be null
+//				int parentId = rs.getInt("parentId");//may be null
 				//Question Attribute;
-				int post_answer_count = rs.getInt("AnswerCount");//may be null
-				int accepted_answerId = rs.getInt("AcceptedAnswerId");//may be null
+//				int post_answer_count = rs.getInt("AnswerCount");//may be null
+//				int accepted_answerId = rs.getInt("AcceptedAnswerId");//may be null
 				
-				answers.add(new Answer(postId,post_title,post_body,post_tag,
-						post_comment_count,parentId,post_answer_count,accepted_answerId,null,null,null));
+				answers.add(new Answer(0,null,post_body,null,
+						0,0,0,0,null,null,null));
 			}		
 			} catch (Exception ex) {
 			System.out.println("Error : " + ex.toString());
@@ -165,7 +165,7 @@ public class PostDAOImpl implements PostDAO {
 				int accepted_answerId = rs.getInt("AcceptedAnswerId");//may be null
 				
 				resultQuestion=new Question(postId,post_title, post_body,post_tag,
-						post_comment_count,parentId,post_answer_count,accepted_answerId,null,null,null);
+						post_comment_count,parentId,post_answer_count,accepted_answerId);
 			}		} catch (Exception ex) {
 			System.out.println("Error : " + ex.toString());
 		} finally {
@@ -186,6 +186,10 @@ public class PostDAOImpl implements PostDAO {
 			String focus = rs.getString("Focus");
 			String system = rs.getString("System");
 			String language = rs.getString("Language");
+			String developE = rs.getString("DevelopE");
+			String database = rs.getString("Database");
+			String component = rs.getString("Componment");
+			String technology = rs.getString("Technology");
 			int post_typeId = rs.getInt("PostTypeId");
 			String post_title = rs.getString("title");
 
@@ -207,7 +211,8 @@ public class PostDAOImpl implements PostDAO {
 			switch (post_typeId) {
 			case 1: {
 				Question question = new Question(postId,post_title,post_body,post_tag,post_comment_count
-						,parentId,post_answer_count,accepted_answerId,focus,system,language);
+						,parentId,post_answer_count,accepted_answerId);
+				question.setFacetName(focus, system, language, developE, component, technology, database);
 //				//generate commentList and AnswerList 
 //				if(question.getPost_comment_count()>0)
 //					question.setCommentList(this.findRelatedComments(question.getPostId()));
@@ -264,15 +269,10 @@ public class PostDAOImpl implements PostDAO {
 			int post_answer_count = rs.getInt("AnswerCount");//may be null
 			int accepted_answerId = rs.getInt("AcceptedAnswerId");//may be null
 
-//			if(!FilterPost.FilterAnswerCount(post_answer_count))
-//				continue;
-//			FilterPost.setFilterTag("mysql");
-//			if(!FilterPost.FilterTag(post_tag))
-//				continue;
 			switch (post_typeId) {
 			case 1: {
 				Question question = new Question(postId,post_title, post_body,post_tag,post_comment_count
-						,parentId,post_answer_count,accepted_answerId,null,null,null);
+						,parentId,post_answer_count,accepted_answerId);
 //				//generate commentList and AnswerList 
 //				if(question.getPost_comment_count()>0)
 //					question.setCommentList(this.findRelatedComments(question.getPostId()));
@@ -280,6 +280,7 @@ public class PostDAOImpl implements PostDAO {
 //					question.setAnswerList(this.findRelatedAnswers(question.getPostId()));
 				Global.intList.add(postId);
 				posts.add(question);
+				question.setAnswerList(findRelatedAnswers(postId));
 				break;
 			}
 			case 2: {
@@ -325,9 +326,10 @@ public class PostDAOImpl implements PostDAO {
 		System.out.println("String:"+keywords);
 
 		
-		String SQLString = "SELECT * FROM stackoverflowdata.posts  where PostTypeId =1 and CONCAT(tags) regexp replace('"
-				+keywords+"',',','|') limit 10";
-
+//		String SQLString = "SELECT * FROM stackoverflowdata.posts  where PostTypeId =1 and CONCAT(tags) regexp replace('"
+//				+keywords+"',',','|') limit 10";
+		
+		String SQLString = "SELECT * FROM stackoverflow.posts where PostTypeId = 1 and CONCAT(title,tags,body) regexp replace('error',',','|') limit 40;";
 		try {
 			pstmt = conn.prepareStatement(SQLString);
 			ResultSet rs = pstmt.executeQuery();
@@ -448,6 +450,10 @@ public class PostDAOImpl implements PostDAO {
 						String focus = rs.getString("Focus");
 						String system = rs.getString("System");
 						String language = rs.getString("Lan");
+						String developE = rs.getString("DevelopE");
+						String database = rs.getString("Database");
+						String component = rs.getString("Componment");
+						String technology = rs.getString("Technology");
 						int post_typeId = 1;
 						String post_title = rs.getString("title");
 						System.out.println(post_title);
@@ -469,7 +475,8 @@ public class PostDAOImpl implements PostDAO {
 //							continue;
 
 						Question question = new Question(postId,post_title,post_body,post_tag,post_comment_count
-								,parentId,post_answer_count,accepted_answerId,focus,system,language);
+								,parentId,post_answer_count,accepted_answerId);
+						question.setFacetName(focus, system, language, developE, component, technology, database);
 //							//generate commentList and AnswerList 
 //							if(question.getPost_comment_count()>0)
 //								question.setCommentList(this.findRelatedComments(question.getPostId()));

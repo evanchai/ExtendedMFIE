@@ -6,6 +6,8 @@ import java.util.Properties;
 
 import cn.edu.fudan.se.util.Global;
 import edu.stanford.nlp.dcoref.CorefChain;
+import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations;
+import edu.stanford.nlp.ie.machinereading.structure.RelationMention;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
@@ -18,6 +20,7 @@ import edu.stanford.nlp.ling.CorefCoreAnnotations.CorefChainAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.trees.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation;
 import edu.stanford.nlp.util.CoreMap;
@@ -73,7 +76,8 @@ public class TestCoreNLP {
 				String pos = token.get(PartOfSpeechAnnotation.class);
 				String lemma = token.get(LemmaAnnotation.class); 
 				
-				System.out.println(word +"  " + pos);
+	       List<RelationMention> relation =   token.get(MachineReadingAnnotations.RelationMentionsAnnotation.class);
+//				System.out.println(word +"  " + pos);
 				if(word.equals("-LRB-"))
 					word = "(";
 				if(word.equals("-RRB-"))
@@ -86,6 +90,7 @@ public class TestCoreNLP {
 			extractSentenceComponents(wordProperty,clause);
 	
 		}
+		
 		return clause;
 		
 		
@@ -281,16 +286,20 @@ public class TestCoreNLP {
 				}
 				if((wp1.getProperty().equals("WRB")||wp1.getProperty().equals("WP"))&&(wp2.getProperty().equals("VBP")||wp2.getProperty().equals("VBZ")))//What do,What does,How am i able to
 				{
-					if(iS)
+					if(!wp2.getLemmaWord().equalsIgnoreCase("be"))
 					{
-						wpList.remove(1);
-						wpList.remove(1);
-					}else
-					{
-						wpList.remove(1);
-						wpList.add(2,wp2);
-						
+						if(iS)
+						{
+							wpList.remove(1);
+							wpList.remove(1);
+						}else
+						{
+							wpList.remove(1);
+							wpList.add(2,wp2);
+							
+						}
 					}
+			
 					translateList.add(wpList);
 			
 				}
@@ -314,7 +323,7 @@ public class TestCoreNLP {
 					
 					translateList.add(wpList);
 				}else if((wp1.getProperty().equals("VBZ")||wp1.getProperty().equals("VBP"))&&(wp2.getProperty().contains("NN")
-						||wp2.getProperty().equals("DT")||wp2.getProperty().equals("PRP")))//Do you,Do the
+						||wp2.getProperty().equals("DT")||wp2.getProperty().equals("PRP")||wp2.getProperty().equals("EX")))//Do you,Do the,IS there
 				{
 					if(iS)
 					{
@@ -648,14 +657,31 @@ public class TestCoreNLP {
 		{
 			wp = wpList.get(i);
 			pointer ++;
-//			if(wp.getProperty().equals("IN"))
-//				return i;
+			if(wp.getProperty().equals("IN"))
+				return i;
 			if(wp.getProperty().equals("RB"))
 				return i;
 			if(wp.getProperty().equals("CC"))
 				return i;
 	    	if(wp.getProperty().equals("VBG"))
-	    		return i;
+	    		return Gerund(i,wpList);
+			if(pointer >= 1)
+				return index;
+				
+		}
+		return index;
+	}
+	private int Gerund(int index, List<WordProperty> wpList)
+	{
+		int num = wpList.size();
+		int pointer = 0;
+		WordProperty wp;
+		for(int i = index+1; i < num ; i++)
+		{
+			wp = wpList.get(i);
+			pointer ++;
+			if(wp.getProperty().equals("IN"))
+				return i;
 			if(pointer >= 1)
 				return index;
 				
@@ -800,8 +826,9 @@ public class TestCoreNLP {
 //        String text = "I try to get data from MySQL in Java Project it works, but if I use Android Project it doesn't work.";
 //		String text = "The motivation behind this is that I want to connect to an online database without a running PHP server, just from a JavaScript embedded in the local page.";
 //        String text = "I'm wondering how can upload files to specific cookbook version.";
-        String text = "I'm completely new to Laravel.";
+//        String text = "I'm completely new to Laravel.";
 //		String text = "But if i dont know  how to connect my application to the database using ODBC?";;
+		String text = "i am new to MFC in Tomcat6.";
 		TestCoreNLP tcNLP = new TestCoreNLP();
 		tcNLP.CoreNLP(text);
 		System.out.println("------------------------");

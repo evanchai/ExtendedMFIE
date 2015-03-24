@@ -3,9 +3,12 @@ import java.sql.*;
 
 public class DBConnection {
 	private static final String DBDrive ="com.mysql.jdbc.Driver";
-	private static final String DBUrl="jdbc:mysql://10.131.252.160:3306/stackoverflowdata";
+//	private static final String DBUrl="jdbc:mysql://10.131.252.160:3306/stackoverflowdata";
+//	private static final String DBUser="root";
+//	private static final String DBPassword="1234";
+	private static final String DBUrl="jdbc:mysql://localhost:3306/stackoverflow";
 	private static final String DBUser="root";
-	private static final String DBPassword="1234";
+	private static final String DBPassword="fdse";
 	
 	public static Connection getConnectio()
 	{

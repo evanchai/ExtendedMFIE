@@ -15,7 +15,7 @@ import cn.edu.fudan.se.facet.Facet;
 import cn.edu.fudan.se.facet.Grade;
 import cn.edu.fudan.se.facet.InitFacetItem;
 import cn.edu.fudan.se.facet.PostFacetType;
-import cn.edu.fudan.se.filter.FilterPost;
+
 import cn.edu.fudan.se.result.Result;
 import cn.edu.fudan.se.util.Global;
 
@@ -47,9 +47,9 @@ public class Main {
 		postList = result.getPosts();
  		
  		postList.clear();
- 		String title = "I just installed SQL Server Express 2012 on my home server";
+ 		String title = "i like to eat apple in visual studio.";
  		String body = "";
- 		postList.add(new Post(0,title,body,"www",0,1,0,0,null,null,null));
+ 		postList.add(new Post(0,title,body,"http",0,1,0,0));
 
 		System.out.println("Size:"+postList.size());
 		ift = new InitFacetItem();
@@ -71,17 +71,17 @@ public class Main {
 
 	   for(Post post:postList)
 	   {
+		   postNum++;
+		   System.out.println("NUM:"+postNum+"|"+post.postId);
+//         if(post.postId!=42996)
+//    	   continue;
+		   
 		   for(Facet item:itemList)
 		   {
 			   item.setIsMatch(false);
-			   item.setIsTag(true);
-			   
+			   item.MatchPattern(post);
 		   }
-		   postNum++;
-		   System.out.println("NUM:"+postNum+"|"+post.postId);
-		
-//           if(post.postId!=42996)
-//        	   continue;
+		   
 		   String text = post.getText((post.post_body_text));
 		   text = post.post_title +"." + text;
 		   if(text.length() > 1000)//�ַ�˵����1500��nlp��ջ���
@@ -91,15 +91,15 @@ public class Main {
 		   for(Facet item:itemList)
 		   {
 
-	
-//			   if(item.getEnvir().contains("Exception"))
+//	
+//			   if(item.getEnvir().contains("Explain"))
 //			   {
+//				   System.out.println("ok");
 //				   item.init(sentenceList, post, queryClause);
 //			   }
+			   if(item.isMatch())
+				   continue;
 			   item.init(sentenceList, post, queryClause);
-
-			
-			   
 		   }
 
 	   }

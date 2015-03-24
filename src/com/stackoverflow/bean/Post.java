@@ -12,6 +12,12 @@ public class Post  implements Serializable{
 	private String system;
 	private String language;
 	
+
+	private String developE;
+	private String component;
+	private String technology;
+	private String database;
+	
 	public int postId;
 
 	public String post_body;
@@ -34,8 +40,19 @@ public class Post  implements Serializable{
 	public int accepted_answerId;
 	public Answer accpted_answer;
 	
+	
+	public void setFacetName(String focus, String system, String language, String developE, String component, String technology, String database)
+	{
+		this.focus = focus;
+		this.system = system;
+		this.language = language;
+		this.database = database;
+		this.developE = developE;
+		this.technology = technology;
+		this.component = component;
+	}
 	public Post(int postId,String post_title,String post_body,String post_tag,int post_comment_count,
-			int parentId,int post_answer_count,int accepted_answerId,String focus,String system,String language)
+			int parentId,int post_answer_count,int accepted_answerId)
 	{
 		this.postId = postId;
 		this.post_title=post_title;
@@ -45,9 +62,7 @@ public class Post  implements Serializable{
 		this.parentId= parentId;
 		this.post_answer_count= post_answer_count;
 		this.accepted_answerId= accepted_answerId;
-		this.focus = focus;
-		this.system = system;
-		this.language = language;
+	
 
 		splitBody(post_body);
 		commentList= null;
@@ -210,6 +225,31 @@ public class Post  implements Serializable{
 	public String getLanguage()
 	{
 		return this.language;
+	}
+	
+	public String getDevelopE() {
+		return developE;
+	}
+	public void setDevelopE(String developE) {
+		this.developE = developE;
+	}
+	public String getComponent() {
+		return component;
+	}
+	public void setComponent(String component) {
+		this.component = component;
+	}
+	public String getTechnology() {
+		return technology;
+	}
+	public void setTechnology(String technology) {
+		this.technology = technology;
+	}
+	public String getDatabase() {
+		return database;
+	}
+	public void setDatabase(String database) {
+		this.database = database;
 	}
 
 }

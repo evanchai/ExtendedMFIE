@@ -20,6 +20,7 @@ public class Expression {
 		expression.add("doesnt ");
 		expression.add("isnt ");
 		expression.add("wasnt");
+		expression.add("unlike");
 	}
 	
 	public static Expression  getInstance()

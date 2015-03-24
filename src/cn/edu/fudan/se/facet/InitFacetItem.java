@@ -10,6 +10,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import cn.edu.fudan.se.facet.Sentence;
+
 
 
 
@@ -21,48 +23,83 @@ private List<Facet> itemList = new ArrayList<Facet>();
 	public InitFacetItem()
 	{
 		 try {
-	            File f = new File("C:\\Users\\jqt\\Desktop\\Others\\stackoverflow\\ExtendedMFIE\\ExtendedMFIE\\facet.xml");
+	            File f = new File("newfacet.xml");
 	            SAXReader reader = new SAXReader();
 	            Document doc = reader.read(f);
 	            Element root = doc.getRootElement();
-	            Element foo;
 
 	            Facet facetInstance = null;
 	            List<Element> facet = root.elements();
 	            for(Element fac:facet)
 	            {
-//	            	if(fac.getName().equalsIgnoreCase("Environment"))
-//	            	{
+	            	String faceName = fac.attributeValue("name");
+        			
+	            	
 	            		 List<Element> element = fac.elements();
 	            		 for(Element ele1:element)
 	            		 {
-//	            			 if(fac.getName().equalsIgnoreCase("Environment"))
-//	            			     facetInstance = new ClassifyPost(ele1.getName(),ele1.elementText("Item"));
-//	            			 else if(fac.getName().equalsIgnoreCase("Focus"))
-//	            				 facetInstance = new ClassifyPost("Focus",ele1.elementText("Item"));
-	            			 
-//	            			 System.out.println(ele1.getName()+"|"+ele1.elementText("Item"));
-	            			
-	            			facetInstance = new ClassifyPost(ele1.getName(),ele1.elementText("Item"));
-//	            			Element model = ele1.element("Model");
+	            			String facetItemName = ele1.attributeValue("name");
+	            			facetInstance = new ClassifyPost(faceName,facetItemName);
+//	            			System.out.println(faceName+"|"+facetItemName);
 	            			
 	            			List<Element> modelElement= ele1.elements();
-	            			List<Model> modelList = new ArrayList<Model>();
-	            			for(Element model:modelElement)
+	            			List<Pattern> patternList = new ArrayList<Pattern>();
+	            			Pattern pattern = null;
+	            			List<Rule> ruleList = null;
+	            			Sentence sentence;
+	            			Code code;
+	            			Tag tag;
+	            			for(Element patterns:modelElement)
 	            			{
-	            				if(model.getName().equals("Model"))
+	            				if(patterns.getName().equals("Pattern"))
 	            				{
-	            					modelList.add(new Model(model.elementText("DomainDicS"),model.elementText("DomainDicP"),model.elementText("DomainDicO")
-	            							,model.elementText("PropertyS"),
-	            							model.elementText("PropertyP"),model.elementText("PropertyO"),
-	            							model.elementText("DomainVerb"),model.elementText("Code"),model.elementText("Tag"),
-	            							model.elementText("Effect"),model.elementText("Question"),model.elementText("Tense"),
-	            							model.elementText("State")));
-	            				}
+	            					String type = patterns.attributeValue("type");
+//	            					System.out.println(patterns.attributeValue("type"));
+	            					pattern = new Pattern(type);
+	            					if(type.equalsIgnoreCase("sentence"))
+	            					{
+	            						Element sentenceElement = patterns.element("Sentence");
+	            						String effect = sentenceElement.attributeValue("Effect");
+	            						String question = sentenceElement.attributeValue("Question");
+	            						String tense = sentenceElement.attributeValue("Tense");
+//	            						System.out.println(sentenceElement.attributeValue("Effect"));
+	            					    ruleList = new ArrayList<Rule>();
+	            			           
+	            					    List<Element> ruleElement = sentenceElement.elements();
+	            					    for(Element rE:ruleElement )
+	            					    {
+	            						
+//	            					    	System.out.println(rE.elementText("Dic"));
+	            							ruleList.add(new Rule(rE.elementText("Type"),rE.elementText("Dic"),rE.elementText("BeforeAfter"),rE.elementText("Property")
+	            										,rE.elementText("DomainVerb"),rE.elementText("Logic")));
+	
+	            					    }
+	            					    sentence = new Sentence(effect,question,tense,ruleList);
+	            					    pattern.setSentence(sentence);
+	            					}else if(type.equalsIgnoreCase("code"))
+	            					{
+	            						String codeDic = patterns.elementText("Code");
+	            						String answerHasCode = patterns.elementText("AnswerHasCode");
+	            						code = new Code(codeDic,answerHasCode);
+//	            						System.out.println(codeDic);
+	            						pattern.setCode(code);
+	            					}else if(type.equalsIgnoreCase("tag"))
+	            					{
+	            						String tagDic = patterns.elementText("Tag");
+	            						tag = new Tag(tagDic);
+//	            						System.out.println(tagDic);
+	            						pattern.setTag(tag);
+	            					}
+	            				
+		            				patternList.add(pattern);
+
+	            				}	            				
 	            			}
-	            			
-	            			
-	            			facetInstance.initModel(modelList);
+//	            			for(Pattern p:patternList)
+//	            			{
+//	            				System.out.println(p.getType());
+//	            			}
+	            			facetInstance.initModel(patternList);
 	            			itemList.add(facetInstance);
 	            			 
 	            		 }
