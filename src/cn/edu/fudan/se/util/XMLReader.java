@@ -4,7 +4,7 @@ import org.dom4j.*;
 import org.dom4j.io.*;
 
 import cn.edu.fudan.se.facet.ClassifyPost;
-import cn.edu.fudan.se.facet.Model;
+import cn.edu.fudan.se.facet.Pattern;
 
 import java.io.*;
 import java.util.*;
